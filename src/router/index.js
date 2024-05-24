@@ -172,4 +172,29 @@ const router = createRouter({
     ]
 });
 
+//导航守卫
+router.beforeEach((to, from, next) => {
+    // 检查用户是否登录
+    const isLoggedIn = checkIfUserIsLoggedIn(); // 这个函数需要根据你的实际情况来实现
+    if (!isLoggedIn && to.path !== '/login') {
+        // 如果用户没有登录且不是访问登录页面，则跳转到登录页面
+        next('/login');
+    } else {
+        next();
+    }
+});
+
+function checkIfUserIsLoggedIn() {
+    // 从 sessionStorage 中获取存储的 JSON 字符串
+    const userinfoString = sessionStorage.getItem('user_info');
+    // 如果 userinfo 存在并且解析后的对象有有效的 user_id，则返回 true 表示已登录
+    if (userinfoString) {
+        const userinfo = JSON.parse(userinfoString);
+        if (userinfo.user_id) {
+            return true;
+        }
+    }
+    // 否则返回 false 表示未登录
+    return false;
+}
 export default router;

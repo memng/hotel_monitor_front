@@ -15,6 +15,6 @@ module.exports = {
             {
                 order: ['script', 'template', 'style']
             }
-        ]
+        ],
     }
 };
