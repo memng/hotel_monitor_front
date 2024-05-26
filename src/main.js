@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 
+
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
 import Accordion from 'primevue/accordion';
@@ -105,12 +106,17 @@ import TreeSelect from 'primevue/treeselect';
 import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
+import HttpService from './service/HttpService';
+import SessionStorageService from './service/SessionStorageService';
 
 import BlockViewer from '@/components/BlockViewer.vue';
 
 import '@/assets/styles.scss';
 
 const app = createApp(App);
+// 注入全局变量
+app.provide('$http', HttpService);
+app.provide('$sessionStorage', SessionStorageService);
 
 app.use(router);
 app.use(PrimeVue, { ripple: true });
@@ -221,28 +227,4 @@ app.component('TreeTable', TreeTable);
 app.component('TriStateCheckbox', TriStateCheckbox);
 app.component('VirtualScroller', VirtualScroller);
 
-app.prototype.$http = async function(url, options) {
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            // 如果返回状态码不是200，则抛出一个错误，后面的 catch 会捕获到
-            throw new Error(response.statusText);
-        }
-        const data = await response.json();
-        if (data.ret === 200) {
-            // 如果返回的 ret 字段值为 200，执行后面的逻辑
-            return data;
-        } else if (data.ret === 500) {
-            // 如果返回的 ret 字段值为 500，跳转到无权限提示页面
-            router.push('/no-permission');
-        } else {
-            // 如果返回的 ret 字段值为其他值，弹窗提示
-            alert('请求失败，请稍后再试');
-        }
-    } catch (error) {
-        // 如果请求失败，弹窗提示
-        alert('请求失败，请稍后再试');
-        throw error;
-    }
-}
 app.mount('#app');

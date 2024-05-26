@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
+import SessionStorageService from '../service/SessionStorageService';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -144,6 +145,11 @@ const router = createRouter({
             ]
         },
         {
+            path: '/login',
+            name: 'login',
+            component: () => import('@/views/pages/auth/Login.vue')
+        },
+        {
             path: '/landing',
             name: 'landing',
             component: () => import('@/views/pages/Landing.vue')
@@ -156,7 +162,7 @@ const router = createRouter({
 
         {
             path: '/auth/login',
-            name: 'login',
+            name: 'authLlogin',
             component: () => import('@/views/pages/auth/Login.vue')
         },
         {
@@ -186,10 +192,10 @@ router.beforeEach((to, from, next) => {
 
 function checkIfUserIsLoggedIn() {
     // 从 sessionStorage 中获取存储的 JSON 字符串
-    const userinfoString = sessionStorage.getItem('user_info');
+    const storage = new SessionStorageService();
+    const userinfo = storage.getUserInfo();
     // 如果 userinfo 存在并且解析后的对象有有效的 user_id，则返回 true 表示已登录
-    if (userinfoString) {
-        const userinfo = JSON.parse(userinfoString);
+    if (userinfo) {
         if (userinfo.user_id) {
             return true;
         }

@@ -1,19 +1,29 @@
 // httpService.js
-import { createToast } from 'primevue/toast'; // 导入 PrimeVue 的 toast 组件
-import router from './router';
+import router from '../router';
+import SessionStorageService from './SessionStorageService';
 
 class HttpService {
-    async request(url, options) {
+    constructor() {
+        // 初始化 URL 前缀属性
+        this.urlPrefix = '';
+    }
+    async request(url, toast, data, options) {
         try {
+            const storage = new SessionStorageService();
+            const userInfo = storage.getUserInfo();
+            const token = userInfo ? userInfo.token : null;
             // 添加验证信息到请求头
             const headers = {
                 ...options.headers,
                 // 添加验证信息
-                Authorization: 'Bearer newToken'
+                Authorization: token
             };
             options.headers = headers;
 
-            const response = await fetch(url, options);
+            // 在请求的 URL 前面添加 URL 前缀
+            const fullUrl = this.urlPrefix + url;
+            const response = await fetch(fullUrl, options);
+            console.log(response);
             if (!response.ok) {
                 throw new Error(response.statusText);
             }
@@ -23,7 +33,7 @@ class HttpService {
                 router.push('/no-permission');
             } else if (data.ret !== 200) {
                 // 显示错误消息
-                createToast({
+                toast.add({
                     severity: 'error',
                     summary: '错误',
                     detail: data.message, // 假设返回的数据中包含错误消息
@@ -32,17 +42,23 @@ class HttpService {
             }
             return data.data;
         } catch (error) {
-            console.error('Request failed:', error);
+            // 显示错误消息
+            toast.add({
+                severity: 'error',
+                summary: '错误',
+                detail: '网络请求错误,请重试', // 假设返回的数据中包含错误消息
+                life: 3000
+            });
             throw error;
         }
     }
 
-    async get(url, options = {}) {
+    async get(url, toast, options = {}) {
         options.method = 'GET';
         return await this.request(url, options);
     }
 
-    async post(url, data = {}, options = {}) {
+    async post(url, toast, data = {}, options = {}) {
         options.method = 'POST';
         const formData = new FormData();
         // 将 data 中的数据添加到 FormData 对象中
@@ -54,7 +70,7 @@ class HttpService {
             'Content-Type': 'multipart/form-data' // 设置正确的 Content-Type
         };
         options.body = formData;
-        return await this.request(url, options); // 使用 await 等待异步请求完成
+        return await this.request(url, toast, data, options); // 使用 await 等待异步请求完成
     }
 }
 

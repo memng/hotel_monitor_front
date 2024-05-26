@@ -1,7 +1,9 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { ref, computed } from 'vue';
+import { ref, computed, inject,getCurrentInstance } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
+import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
 const { layoutConfig } = useLayout();
 const email = ref('');
@@ -11,6 +13,21 @@ const checked = ref(false);
 const logoUrl = computed(() => {
     return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
 });
+const httpService = inject('$http');
+const sessionStorage = inject('$sessionStorage');
+const router = useRouter();
+const toast = useToast();
+console.log(getCurrentInstance());
+
+async function doLoginIn() {
+    const sessionStorageObj = new sessionStorage();
+    const data = await httpService.post('/api/doLogin', toast);
+    console.log(data);
+    sessionStorageObj.setUserInfo(data.user_info);
+    sessionStorageObj.setConfig(data.config);
+    router.push('/');
+}
+
 </script>
 
 <template>
@@ -39,7 +56,7 @@ const logoUrl = computed(() => {
                             </div>
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
                         </div>
-                        <Button label="Sign In" class="w-full p-3 text-xl"></Button>
+                        <Button @click="doLoginIn()" label="Sign In" class="w-full p-3 text-xl"></Button>
                     </div>
                 </div>
             </div>
