@@ -1,6 +1,6 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { ref, computed, inject,getCurrentInstance } from 'vue';
+import { ref, computed, inject, getCurrentInstance } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
@@ -20,12 +20,16 @@ const toast = useToast();
 console.log(getCurrentInstance());
 
 async function doLoginIn() {
-    const sessionStorageObj = new sessionStorage();
-    const data = await httpService.post('/api/doLogin', toast);
-    console.log(data);
-    sessionStorageObj.setUserInfo(data.user_info);
-    sessionStorageObj.setConfig(data.config);
-    router.push('/');
+    try {
+        const sessionStorageObj = new sessionStorage();
+        const data = await httpService.post('/api/doLogin', toast);
+        sessionStorageObj.setUserInfo(data.user_info);
+        sessionStorageObj.setConfig(data.config);
+        router.push('/');
+    } catch (error) {
+        // 错误处理逻辑
+        console.error(error);
+    }
 }
 
 </script>

@@ -15,6 +15,11 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
+                    path: 'nopermission',
+                    name: 'nopermission',
+                    component: () => import('@/views/pages/auth/Access.vue')
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
@@ -147,7 +152,19 @@ const router = createRouter({
         {
             path: '/login',
             name: 'login',
-            component: () => import('@/views/pages/auth/Login.vue')
+            component: () => import('@/views/pages/auth/Login.vue'),
+            // 在异步组件加载后执行
+            beforeEnter: (to, from, next) => {
+                // 检查用户是否登录
+                const isLoggedIn = checkIfUserIsLoggedIn(); // 这个函数需要根据你的实际情况来实现
+                if (isLoggedIn) {
+                    // 用户已登录，跳转到首页
+                    next('/');
+                } else {
+                    // 用户未登录，继续显示登录页面
+                    next();
+                }
+            },
         },
         {
             path: '/landing',
@@ -180,6 +197,9 @@ const router = createRouter({
 
 //导航守卫
 router.beforeEach((to, from, next) => {
+    if (to.name === 'nopermission') {
+        next();
+    }
     // 检查用户是否登录
     const isLoggedIn = checkIfUserIsLoggedIn(); // 这个函数需要根据你的实际情况来实现
     if (!isLoggedIn && to.path !== '/login') {

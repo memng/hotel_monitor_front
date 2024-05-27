@@ -23,14 +23,15 @@ class HttpService {
             // 在请求的 URL 前面添加 URL 前缀
             const fullUrl = this.urlPrefix + url;
             const response = await fetch(fullUrl, options);
-            console.log(response);
             if (!response.ok) {
                 throw new Error(response.statusText);
             }
             const data = await response.json();
+            console.log(data.ret);
             if (data.ret === 500) {
                 // 跳转到无权限页面
-                router.push('/no-permission');
+                router.push('/nopermission');
+                throw new Error('no permission');
             } else if (data.ret !== 200) {
                 // 显示错误消息
                 toast.add({
@@ -39,6 +40,7 @@ class HttpService {
                     detail: data.message, // 假设返回的数据中包含错误消息
                     life: 3000
                 });
+                throw new Error('data error');
             }
             return data.data;
         } catch (error) {

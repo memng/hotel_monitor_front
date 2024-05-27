@@ -1,14 +1,17 @@
 <script setup>
-import { computed, watch, ref } from 'vue';
+import { computed, watch, ref, onMounted, onBeforeUnmount } from 'vue';
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
+import NotSupport from '@/views/pages/auth/NotSupport.vue';
 import { useLayout } from '@/layout/composables/layout';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
+
+const isSupported = ref(true);
 
 watch(isSidebarActive, (newVal) => {
     if (newVal) {
@@ -54,6 +57,19 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
+
+const checkScreenWidth = () => {
+    isSupported.value = window.innerWidth > 991;
+};
+
+onMounted(() => {
+    checkScreenWidth();
+    window.addEventListener('resize', checkScreenWidth);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', checkScreenWidth);
+});
 </script>
 
 <template>
@@ -63,8 +79,11 @@ const isOutsideClicked = (event) => {
             <app-sidebar></app-sidebar>
         </div>
         <div class="layout-main-container">
-            <div class="layout-main">
+            <div v-if="isSupported" class="layout-main">
                 <router-view></router-view>
+            </div>
+            <div v-else class="layout-main">
+                <NotSupport></NotSupport>
             </div>
             <app-footer></app-footer>
         </div>
