@@ -73,6 +73,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+    <Toast />
     <div class="layout-wrapper" :class="containerClass">
         <app-topbar></app-topbar>
         <div class="layout-sidebar">

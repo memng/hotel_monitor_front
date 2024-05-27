@@ -4,7 +4,7 @@ export default [
         method: 'post',
         response: () => {
             return {
-                ret: 300,
+                ret: 200,
                 data: {
                     user_info: {
                         user_id: 1,

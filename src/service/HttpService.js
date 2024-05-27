@@ -24,23 +24,15 @@ class HttpService {
             const fullUrl = this.urlPrefix + url;
             const response = await fetch(fullUrl, options);
             if (!response.ok) {
-                throw new Error(response.statusText);
+                throw new Error('服务器错误');
             }
             const data = await response.json();
-            console.log(data.ret);
             if (data.ret === 500) {
                 // 跳转到无权限页面
                 router.push('/nopermission');
                 throw new Error('no permission');
             } else if (data.ret !== 200) {
-                // 显示错误消息
-                toast.add({
-                    severity: 'error',
-                    summary: '错误',
-                    detail: data.message, // 假设返回的数据中包含错误消息
-                    life: 3000
-                });
-                throw new Error('data error');
+                throw new Error(data.message);
             }
             return data.data;
         } catch (error) {
@@ -48,8 +40,8 @@ class HttpService {
             toast.add({
                 severity: 'error',
                 summary: '错误',
-                detail: '网络请求错误,请重试', // 假设返回的数据中包含错误消息
-                life: 3000
+                detail: error.message, // 假设返回的数据中包含错误消息
+                life: 5000
             });
             throw error;
         }
