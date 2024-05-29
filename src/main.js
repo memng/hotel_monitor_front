@@ -106,17 +106,12 @@ import TreeSelect from 'primevue/treeselect';
 import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
-import HttpService from './service/HttpService';
-import SessionStorageService from './service/SessionStorageService';
 
 import BlockViewer from '@/components/BlockViewer.vue';
 
 import '@/assets/styles.scss';
 
 const app = createApp(App);
-// 注入全局变量
-app.provide('$http', HttpService);
-app.provide('$sessionStorage', SessionStorageService);
 
 app.use(router);
 app.use(PrimeVue, { ripple: true });

@@ -1,9 +1,11 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { ref, computed, inject, getCurrentInstance } from 'vue';
+import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
+import httpService from '@/service/HttpService';
+import SessionStorageService from '@/service/SessionStorageService';
 
 const { layoutConfig } = useLayout();
 const email = ref('');
@@ -13,22 +15,20 @@ const checked = ref(false);
 const logoUrl = computed(() => {
     return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
 });
-const httpService = inject('$http');
-const sessionStorage = inject('$sessionStorage');
+const sessionStorageObj = new SessionStorageService();
 const router = useRouter();
 const toast = useToast();
-console.log(getCurrentInstance());
 
 async function doLoginIn() {
     try {
-        const sessionStorageObj = new sessionStorage();
         const data = await httpService.post('/api/doLogin', toast);
         sessionStorageObj.setUserInfo(data.user_info);
         sessionStorageObj.setConfig(data.config);
+        sessionStorageObj.setToken(data.token);
         router.push('/');
     } catch (error) {
         // 错误处理逻辑
-        //console.error(error);
+        console.error(error);
     }
 }
 

@@ -10,8 +10,7 @@ class HttpService {
     async request(url, toast, data, options) {
         try {
             const storage = new SessionStorageService();
-            const userInfo = storage.getUserInfo();
-            const token = userInfo ? userInfo.token : null;
+            const token = storage.getToken();
             // 添加验证信息到请求头
             const headers = {
                 ...options.headers,

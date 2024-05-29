@@ -2,6 +2,7 @@ export default class SessionStorageService {
     constructor() {
         this.userInfoKey = 'user_info';
         this.configKey = 'config';
+        this.tokenKey = 'token';
     }
 
     // 保存 user_info
@@ -42,6 +43,21 @@ export default class SessionStorageService {
     // 清除 config
     clearConfig() {
         sessionStorage.removeItem(this.configKey);
+    }
+
+    // 保存 token
+    setToken(token) {
+        sessionStorage.setItem(this.tokenKey, token);
+    }
+
+    // 获取 token
+    getToken() {
+        return sessionStorage.getItem(this.tokenKey);
+    }
+
+    // 清除 token
+    clearToken() {
+        sessionStorage.removeItem(this.tokenKey);
     }
 
     // 清除所有 sessionStorage 数据

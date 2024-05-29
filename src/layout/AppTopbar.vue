@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
+import { useToast } from 'primevue/usetoast';
 import SessionStorageService from '@/service/SessionStorageService';
 import moment from 'moment';
 const { layoutConfig, onMenuToggle } = useLayout();
@@ -8,10 +9,13 @@ const { layoutConfig, onMenuToggle } = useLayout();
 const logoUrl = computed(() => {
     return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
 });
+const menu = ref();
+const toast = useToast();
+
 const sssObj = new SessionStorageService();
 const rangeConfig = sssObj.getConfig();
 const items = [];
-rangeConfig.array.forEach((element) => {
+rangeConfig.forEach((element) => {
     let start_date = element.start_date;
     let end_date = element.end_date;
 
@@ -25,36 +29,34 @@ rangeConfig.array.forEach((element) => {
     items.push({
         id: element.id,
         label: start_date + '-' + end_date,
-        command:(menuItem) => {
+        command: (menuItem) => {
             // 执行你的操作，比如显示 toast
-            console.log(menuItem.item.id);
+            switchCurrentMenuItem(menuItem.item.id);
         }
     });
 });
-function isDateString(str) {
-    return moment(str, 'YYYY-MM-DD', true).isValid();
+function switchCurrentMenuItem(itemId){
+    //判断有无切换权限
+    const foundItem = rangeConfig.find((item) => item.id === itemId);
+    const userInfo = sssObj.getUserInfo();
+    const groupId = userInfo.group_id;
+    if (foundItem.allow_group_id.includes(groupId)) {
+        sssObj.setCurrentMenuItem(foundItem);
+    } else {
+        toast.add({
+            severity: 'error',
+            summary: '错误',
+            detail: '您的会员级别不支持查看该时间段数据', // 假设返回的数据中包含错误消息
+            life: 5000
+        });
+    }
 }
-const menu = ref();
-// const items = ref([
-//     {
-//         label: '实时数据请选择至live',
-//         items: [
-//             {
-//                 label: 'Refresh',
-//                 icon: 'pi pi-refresh',
-//                 command: () => {}
-//             },
-//             {
-//                 label: 'Export',
-//                 icon: 'pi pi-upload'
-//             }
-//         ]
-//     }
-// ]);
-
 const toggle = (event) => {
     menu.value.toggle(event);
 };
+const isDateString = (str) => {
+    moment(str, 'YYYY-MM-DD', true).isValid();
+}
 
 </script>
 
