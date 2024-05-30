@@ -3,6 +3,7 @@ export default class SessionStorageService {
         this.userInfoKey = 'user_info';
         this.configKey = 'config';
         this.tokenKey = 'token';
+        this.currentMenuItem = 'current_menu_item';
     }
 
     // 保存 user_info
@@ -43,6 +44,26 @@ export default class SessionStorageService {
     // 清除 config
     clearConfig() {
         sessionStorage.removeItem(this.configKey);
+    }
+
+    // 保存 current_menu_item
+    setCurrentMenuItem(currentMenuItem) {
+        if (typeof userInfo === 'object') {
+            sessionStorage.setItem(this.currentMenuItem, JSON.stringify(currentMenuItem));
+        } else {
+            console.error('CurrentMenuItem should be an object');
+        }
+    }
+
+    // 获取 current_menu_item
+    getCurrentMenuItem() {
+        const currentMenu = sessionStorage.getItem(this.currentMenuItem);
+        return currentMenu ? JSON.parse(currentMenu) : null;
+    }
+
+    // 清除 current_menu_item
+    clearCurrentMenuItem() {
+        sessionStorage.removeItem(this.currentMenuItem);
     }
 
     // 保存 token

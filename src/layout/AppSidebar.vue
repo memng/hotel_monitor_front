@@ -1,9 +1,9 @@
 <script setup>
-import AppMenu from './AppMenu.vue';
+
 </script>
 
 <template>
-    <app-menu></app-menu>
+    <Calendar v-model="date" dateFormat="yy-mm-dd" />
 </template>
 
 <style lang="scss" scoped></style>

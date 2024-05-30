@@ -6,12 +6,17 @@ import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
 import NotSupport from '@/views/pages/auth/NotSupport.vue';
 import { useLayout } from '@/layout/composables/layout';
+import HttpService from '@/service/HttpService';
+import { useToast } from 'primevue/usetoast';
+import SessionStorageService from '@/service/SessionStorageService';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
 
 const isSupported = ref(true);
+
+const toast = useToast();
 
 watch(isSidebarActive, (newVal) => {
     if (newVal) {
@@ -62,14 +67,24 @@ const checkScreenWidth = () => {
     isSupported.value = window.innerWidth > 991;
 };
 
+async function refreshToken()  {
+    const tokenHttp = await HttpService.post('/api/refreshToken', toast);
+    const session = new SessionStorageService();
+    session.setToken(tokenHttp.token);
+}
+
+let intervalId;
 onMounted(() => {
     checkScreenWidth();
     window.addEventListener('resize', checkScreenWidth);
+    intervalId = setInterval(refreshToken, 30 * 60 * 1000);
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('resize', checkScreenWidth);
+    clearInterval(intervalId);
 });
+
 </script>
 
 <template>
