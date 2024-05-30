@@ -26,8 +26,11 @@ class HttpService {
                 throw new Error('服务器错误');
             }
             const data = await response.json();
-            if (data.ret === 500) {
+            if (data.ret === 401) {
                 // 跳转到无权限页面
+                router.push('/login');
+                throw new Error('token expire');
+            } else if (data.ret === 403) {
                 router.push('/nopermission');
                 throw new Error('no permission');
             } else if (data.ret !== 200) {

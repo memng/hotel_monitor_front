@@ -17,14 +17,14 @@ const toast = useToast();
 const sssObj = new SessionStorageService();
 
 const buttonLabel = computed(() => {
-    let start_date = currentMenu.start_date;
-    let end_date = currentMenu.end_date;
+    let start_date = currentMenu.value.start_date;
+    let end_date = currentMenu.value.end_date;
 
-    if (isDateString(currentMenu.start_date)) {
-        start_date = moment(currentMenu.start_date, 'YYYY-MM-DD').format('YY.MM.DD');
+    if (isDateString(currentMenu.value.start_date)) {
+        start_date = moment(currentMenu.value.start_date, 'YYYY-MM-DD').format('YY.MM.DD');
     }
-    if (isDateString(currentMenu.end_date)) {
-        end_date = moment(currentMenu.end_date, 'YYYY-MM-DD').format('YY.MM.DD');
+    if (isDateString(currentMenu.value.end_date)) {
+        end_date = moment(currentMenu.value.end_date, 'YYYY-MM-DD').format('YY.MM.DD');
     }
     return start_date + '-' + end_date;
 });
@@ -36,9 +36,10 @@ onBeforeMount(() => {
 });
 
 let intervalId;
+let intervalTime = 6 * 60 * 60 * 1000;
 
 onMounted(() => {
-    intervalId = setInterval(refreshConfig, 6 * 60 * 60 * 1000);
+    intervalId = setInterval(refreshConfig, intervalTime);
 });
 
 onUnmounted(() => {
@@ -49,7 +50,7 @@ async function refreshConfig(){
     const configRequest = await HttpService.post('/api/refreshConfig', toast);
     const config = configRequest.config;
     const storeConfig = sssObj.getConfig();
-    if (JSON.stringify(config) === JSON.stringify(storeConfig)) {
+    if (JSON.stringify(config) !== JSON.stringify(storeConfig)) {
         sssObj.setConfig(config);
         watchRangeConfig(config);
     }
@@ -62,6 +63,7 @@ function setCurrentMenuItem(rangeConfig){
 }
 
 function watchRangeConfig(rangeConfig){
+    const tmepList = [];
     rangeConfig.forEach((element) => {
         let start_date = element.start_date;
         let end_date = element.end_date;
@@ -73,7 +75,7 @@ function watchRangeConfig(rangeConfig){
             end_date = moment(element.end_date, 'YYYY-MM-DD').format('YY.MM.DD');
         }
 
-        items.value.push({
+        tmepList.push({
             id: element.id,
             label: start_date + '-' + end_date,
             command: (menuItem) => {
@@ -82,6 +84,7 @@ function watchRangeConfig(rangeConfig){
             }
         });
     });
+    items.value = tmepList;
 }
 function switchCurrentMenuItem(itemId, rangeConfig){
     //判断有无切换权限
@@ -104,7 +107,7 @@ const toggle = (event) => {
     menu.value.toggle(event);
 };
 const isDateString = (str) => {
-    moment(str, 'YYYY-MM-DD', true).isValid();
+    return moment(str, 'YYYY-MM-DD', true).isValid();
 }
 
 </script>
