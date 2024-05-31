@@ -7,7 +7,7 @@ class HttpService {
         // 初始化 URL 前缀属性
         this.urlPrefix = '';
     }
-    async request(url, toast, data, options) {
+    async request(url, toast, options) {
         try {
             const storage = new SessionStorageService();
             const token = storage.getToken();
@@ -51,6 +51,7 @@ class HttpService {
 
     async get(url, toast, params = {}, options = {}) {
         options.method = 'GET';
+        options.headers = {};
         const queryString = new URLSearchParams(params).toString();
         const fullUrl = queryString ? `${url}?${queryString}` : url;
         return await this.request(fullUrl, toast, options);
@@ -68,7 +69,7 @@ class HttpService {
             'Content-Type': 'multipart/form-data' // 设置正确的 Content-Type
         };
         options.body = formData;
-        return await this.request(url, toast, data, options); // 使用 await 等待异步请求完成
+        return await this.request(url, toast, options); // 使用 await 等待异步请求完成
     }
 }
 

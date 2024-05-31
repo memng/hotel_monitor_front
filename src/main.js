@@ -115,7 +115,7 @@ import '@/assets/styles.scss';
 const app = createApp(App);
 
 app.use(router);
-app.use(PrimeVue, { ripple: true, locale: zhCN });
+app.use(PrimeVue, { ripple: true, locale: zhCN['zh-CN'] });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);

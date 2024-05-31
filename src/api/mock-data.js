@@ -94,31 +94,29 @@ export default [
         response: () => {
             return Mock.mock({
                 ret: 200,
-                data: {
-                    config: [
-                        {
-                            compition_name: '意甲',
-                            host_name: '尤文图斯',
-                            guest_name: '蒙扎',
-                            compition_time: '2024-05-31 18:00',
-                            market_id: '1.229143041'
-                        },
-                        {
-                            compition_name: '英超',
-                            host_name: '尤文图斯',
-                            guest_name: '蒙扎',
-                            compition_time: '2024-05-31 18:00',
-                            market_id: '1.229143042'
-                        },
-                        {
-                            compition_name: '英超',
-                            host_name: '尤文图斯',
-                            guest_name: '蒙扎',
-                            compition_time: '2024-05-31 18:00',
-                            market_id: '1.229143043'
-                        },
-                    ]
-                },
+                data: [
+                    {
+                        compition_name: '意甲',
+                        host_name: '尤文图斯',
+                        guest_name: '蒙扎',
+                        compition_time: '2024-05-31 18:00',
+                        market_id: '1.229143041'
+                    },
+                    {
+                        compition_name: '英超',
+                        host_name: '尤文图斯',
+                        guest_name: '蒙扎',
+                        compition_time: '2024-05-31 18:00',
+                        market_id: '1.229143042'
+                    },
+                    {
+                        compition_name: '英超',
+                        host_name: '尤文图斯',
+                        guest_name: '蒙扎',
+                        compition_time: '2024-05-31 18:00',
+                        market_id: '1.229143043'
+                    },
+                ],
                 message: 'test information'
             });
         }
