@@ -49,9 +49,11 @@ class HttpService {
         }
     }
 
-    async get(url, toast, options = {}) {
+    async get(url, toast, params = {}, options = {}) {
         options.method = 'GET';
-        return await this.request(url, options);
+        const queryString = new URLSearchParams(params).toString();
+        const fullUrl = queryString ? `${url}?${queryString}` : url;
+        return await this.request(fullUrl, toast, options);
     }
 
     async post(url, toast, data = {}, options = {}) {

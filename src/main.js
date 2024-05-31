@@ -108,13 +108,14 @@ import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
 import BlockViewer from '@/components/BlockViewer.vue';
+import zhCN from '@/language/zh-CN';
 
 import '@/assets/styles.scss';
 
 const app = createApp(App);
 
 app.use(router);
-app.use(PrimeVue, { ripple: true });
+app.use(PrimeVue, { ripple: true, locale: zhCN });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
