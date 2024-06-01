@@ -1,13 +1,15 @@
 <script setup>
-import { computed, onBeforeMount, ref, onMounted, onUnmounted } from 'vue';
+import { computed, onBeforeMount, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useToast } from 'primevue/usetoast';
 import SessionStorageService from '@/service/SessionStorageService';
 import HttpService from '@/service/HttpService';
 import moment from 'moment';
 import { useRangMenu } from './global_state/topbar_menu';
+import { useMenuTab } from './global_state/selection_tab';
 const { layoutConfig, onMenuToggle } = useLayout();
 const { items, currentMenu } = useRangMenu();
+const { tabs, selectedTabId } = useMenuTab();
 
 const logoUrl = computed(() => {
     return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
@@ -15,6 +17,7 @@ const logoUrl = computed(() => {
 const menu = ref();
 const toast = useToast();
 const sssObj = new SessionStorageService();
+const activeTabIndex = ref();
 
 const buttonLabel = computed(() => {
     let start_date = currentMenu.value.start_date;
@@ -86,7 +89,7 @@ function watchRangeConfig(rangeConfig){
     });
     items.value = tmepList;
 }
-function switchCurrentMenuItem(itemId, rangeConfig){
+function switchCurrentMenuItem(itemId, rangeConfig) {
     //判断有无切换权限
     const foundItem = rangeConfig.find((item) => item.id === itemId);
     const userInfo = sssObj.getUserInfo();
@@ -109,6 +112,33 @@ const toggle = (event) => {
 const isDateString = (str) => {
     return moment(str, 'YYYY-MM-DD', true).isValid();
 }
+watch(
+    selectedTabId,
+    (newValue) => {
+        activeTabIndex.value = tabs.value.findIndex((item) => item.market_id === newValue);
+    },
+    { immediate: true }
+);
+
+const onTabClick = (marketId) => {
+    selectedTabId.value = marketId;
+} 
+
+const doCloseTab = (marketId) => {
+    const tabLength = tabs.value.length;
+    let index = tabs.value.findIndex((element) => element.market_id === marketId);
+    if (tabLength > 1) {
+        if (index > 0) {
+            index--;
+        } else {
+            index++;
+        }
+        selectedTabId.value = tabs.value[index];
+    } else {
+        selectedTabId.value = false;
+    }
+    tabs.value = tabs.value.filter((tab) => tab.market_id !== marketId);
+}
 
 </script>
 
@@ -127,6 +157,20 @@ const isDateString = (str) => {
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
             <i class="pi pi-bars"></i>
         </button>
+
+        <div class="flex justify-content-center">
+            <TabView v-model:activeIndex="activeTabIndex">
+                <TabPanel v-for="tab in tabs" :key="tab.market_id">
+                    <template #header>
+                        <span @click="onTabClick(tab.market_id)">
+                            {{ tab.host_name }}
+                            {{ tab.guset_name }}
+                        </span>
+                        <Button icon="pi pi-times" class="p-button-rounded p-button-text p-ml-2" @click.stop="doCloseTab(tab.market_id)" />
+                    </template>
+                </TabPanel>
+            </TabView>
+        </div>
     </div>
 </template>
 

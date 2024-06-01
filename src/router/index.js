@@ -10,10 +10,22 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
-                    path: '/',
-                    name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
+                    path: 'main/:market_id',
+                    name: 'mainview',
+                    component: () => import('@/views/MainView.vue'),
+                    props: (route) => {
+                        // 使用正则表达式匹配参数
+                        const marketId = route.params.market_id.match(/[0-9]+\.[0-9]+/);
+                        return {
+                            market_id: marketId ? marketId[0] : null
+                        };
+                    },
                 },
+                // {
+                //     path: '/',
+                //     name: 'dashboard',
+                //     component: () => import('@/views/Dashboard.vue')
+                // },
                 {
                     path: 'nopermission',
                     name: 'nopermission',
@@ -25,7 +37,7 @@ const router = createRouter({
                     component: () => import('@/views/uikit/FormLayout.vue')
                 },
                 {
-                    path: '/uikit/input',
+                    path: 'uikit/input',
                     name: 'input',
                     component: () => import('@/views/uikit/Input.vue')
                 },

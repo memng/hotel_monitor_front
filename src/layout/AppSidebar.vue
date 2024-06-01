@@ -2,14 +2,17 @@
 import { ref, computed, watch } from 'vue';
 import moment from 'moment';
 import { useRangMenu } from './global_state/topbar_menu';
+import { useMenuTab } from './global_state/selection_tab';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
+import router from '@/router';
 
 const toast = useToast();
 const eventDataRaw = ref([]);
 const showFilterButton = ref(false);
 
 const { currentMenu } = useRangMenu();
+const { tabs, selectedTabId } = useMenuTab();
 
 const isDateString = (str) => {
     return moment(str, 'YYYY-MM-DD', true).isValid();
@@ -25,6 +28,7 @@ const initDate = computed(() => {
 });
 
 const date = ref(initDate.value);
+const selectedNames = ref([]);
 
 watch(
     date,
@@ -32,6 +36,10 @@ watch(
         try {
             eventDataRaw.value = await HttpService.get('/api/getEventByDate', toast, { date: newValue });
             showFilterButton.value = true;
+            selectedNames.value = (() => {
+                const names = eventDataRaw.value.map((compition) => compition.compition_name);
+                return [...new Set(names)];
+            })();
         } catch (error) {
             console.log('load event data error:' + error.message);
         }
@@ -44,72 +52,73 @@ watch(initDate, (newValue) => {
 
 //弹窗相关
 const showDialog = ref(false);
-const selectedNames = ref([]);
 const allSelected = ref(false);
 const noneSelected = ref(false);
 const reverseSelected = ref(false);
 
 const uniqueNames = computed(() => {
-    const ages = eventDataRaw.value.map((compition) => compition.compition_name);
-    return [...new Set(ages)];
+    const names = eventDataRaw.value.map((compition) => compition.compition_name);
+    return [...new Set(names)];
 });
 
+
 const filteredCompition = computed(() => {
-    // if (selectedNames.value.length === 0) {
-    //     return eventDataRaw.value;
-    // }
     return eventDataRaw.value.filter((compition) => selectedNames.value.includes(compition.compition_name));
 });
 
-watch(filteredCompition, (newValue) => {
-  
-    console.log(newValue);
-});
+const selectAll = () => {
+    selectedNames.value = uniqueNames.value;
+    noneSelected.value = false;
+    reverseSelected.value = false;
+};
+const deselectAll = () => {
+    selectedNames.value = [];
+    allSelected.value = false;
+    reverseSelected.value = false;
+};
 
-watch(allSelected, (newValue) => {
-    if (newValue) {
-        selectedNames.value = uniqueNames.value;
-        noneSelected.value = false;
-        reverseSelected.value = false;
+const reverseSelection = () => {
+    selectedNames.value = uniqueNames.value.filter((name) => !selectedNames.value.includes(name));
+    allSelected.value = false;
+    noneSelected.value = false;
+};
+
+//选项卡相关
+const isTabOpen = (marketId) => tabs.value.some((item) => item.market_id === marketId);
+const doCloseTab = (marketId) => {
+    const tabLength = tabs.value.length;
+    let index = tabs.value.findIndex((element) => element.market_id === marketId);
+    if (tabLength > 1) {
+        if (index > 0) {
+            index--;
+        } else {
+            index++;
+        }
+        selectedTabId.value = tabs.value[index];
+    } else {
+        selectedTabId.value = false;
     }
-    //console.log(selectedNames.value);
-});
-
-watch(noneSelected, (newValue) => {
-    if (newValue) {
-        selectedNames.value = [];
-        allSelected.value = false;
-        reverseSelected.value = false;
+    tabs.value = tabs.value.filter((tab) => tab.market_id !== marketId);
+}
+const doOpenTab = (marketId) => {
+    if (tabs.value.length > 8) {
+        toast.add({
+            severity: 'error',
+            summary: '错误',
+            detail: '打开太多比赛了,请关闭一些', // 假设返回的数据中包含错误消息
+            life: 5000
+        });
+    } else {
+        if (!isTabOpen(marketId)) {
+            const findItem = filteredCompition.value.find((item) => item.market_id === marketId);
+            if (findItem !== undefined) {
+                tabs.value.push(findItem);
+                selectedTabId.value = findItem.market_id;
+                router.push({ name: 'mainview', params: { market_id: marketId } });
+            }
+        }
     }
-});
-
-watch(reverseSelected, (newValue) => {
-    if (newValue) {
-        selectedNames.value = uniqueNames.value.filter((name) => !selectedNames.value.includes(name));
-        allSelected.value = false;
-        noneSelected.value = false;
-    }
-});
-
-// const selectAll = () => {
-//     selectedNames.value = uniqueNames.value;
-//     allSelected.value = true;
-//     noneSelected.value = false;
-//     reverseSelected.value = false;
-// };
-// const deselectAll = () => {
-//     selectedNames.value = [];
-//     noneSelected.value = true;
-//     selectAll.value = false;
-//     reverseSelected.value = false;
-// };
-
-// const reverseSelection = () => {
-//     selectedNames.value = uniqueNames.value.filter((name) => !selectedNames.value.includes(name));
-//     reverseSelected.value = true;
-//     selectAll.value = false;
-//     deselectAll.value = false;
-// };
+}
 </script>
 
 <template>
@@ -124,23 +133,24 @@ watch(reverseSelected, (newValue) => {
                 </div>
             </div>
             <div class="card flex flex-wrap justify-content-center gap-3">
-                <Checkbox v-model="allSelected"  inputId="allSelected" value="全选" />
+                <Checkbox v-model="allSelected" @change="selectAll"  inputId="allSelected" value="全选" />
                 <label for="allSelected" class="ml-2">全选</label>
-                <Checkbox v-model="noneSelected" inputId="noneSelected" value="全不选" />
+                <Checkbox v-model="noneSelected" @change="deselectAll" inputId="noneSelected" value="全不选" />
                 <label for="noneSelected" class="ml-2">全不选</label>
-                <Checkbox v-model="reverseSelected"  inputId="reverseSelected" value="反选" />
+                <Checkbox v-model="reverseSelected" @change="reverseSelection" inputId="reverseSelected" value="反选" />
                 <label for="reverseSelected" class="ml-2">反选</label>
             </div>
         </div>
     </Dialog>
     <div v-for="match in filteredCompition" :key="match.market_id" class="match-card">
         <Card>
-            <template #title>
-                {{ match.compition_name }}
-            </template>
             <template #content>
-                <div>队伍: {{ match.host_name }} VS {{ match.guest_name }} </div>
-                <div>开赛时间: {{ match.compition_time }}</div>
+                <div>{{ match.compition_name }} 队伍: {{ match.host_name }} VS {{ match.guest_name }} </div>
+                <div>
+                    开赛时间: {{ match.compition_time }}
+                    <button v-if="isTabOpen(match.market_id)" @click="doCloseTab(match.market_id)">关闭</button>
+                    <button v-else @click="doOpenTab(match.market_id)">打开</button>
+                </div>
             </template>
         </Card>
     </div>
