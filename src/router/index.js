@@ -15,17 +15,17 @@ const router = createRouter({
                     component: () => import('@/views/MainView.vue'),
                     props: (route) => {
                         // 使用正则表达式匹配参数
-                        const marketId = route.params.market_id.match(/[0-9]+\.[0-9]+/);
+                        const marketId = route.params.market_id.replace(/_/g, '.');
                         return {
-                            market_id: marketId ? marketId[0] : null
+                            market_id: marketId
                         };
                     },
                 },
-                // {
-                //     path: '/',
-                //     name: 'dashboard',
-                //     component: () => import('@/views/Dashboard.vue')
-                // },
+                {
+                    path: 'mainempty',
+                    name: 'mainviewempty',
+                    component: () => import('@/views/MainViewEmpty.vue'),
+                },
                 {
                     path: 'nopermission',
                     name: 'nopermission',

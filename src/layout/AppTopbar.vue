@@ -2,6 +2,7 @@
 import { computed, onBeforeMount, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useToast } from 'primevue/usetoast';
+import router from '@/router';
 import SessionStorageService from '@/service/SessionStorageService';
 import HttpService from '@/service/HttpService';
 import moment from 'moment';
@@ -115,13 +116,25 @@ const isDateString = (str) => {
 watch(
     selectedTabId,
     (newValue) => {
-        activeTabIndex.value = tabs.value.findIndex((item) => item.market_id === newValue);
+        if (newValue) {
+            activeTabIndex.value = tabs.value.findIndex((item) => item.market_id === newValue);
+            router.push({ name: 'mainview', params: { market_id: newValue.replace(/\./g, '_') } });
+        }
     },
     { immediate: true }
 );
+watch(
+    tabs,
+    (newValue) => {
+        if (newValue.length === 0) {
+            router.push({ name: 'mainviewempty' });
+        }
+    },
+    { immediate: true }
+)
 
-const onTabClick = (marketId) => {
-    selectedTabId.value = marketId;
+const onTabChange = (event) => {
+    selectedTabId.value = tabs.value[event.index].market_id;
 } 
 
 const doCloseTab = (marketId) => {
@@ -133,9 +146,11 @@ const doCloseTab = (marketId) => {
         } else {
             index++;
         }
-        selectedTabId.value = tabs.value[index];
+        selectedTabId.value = tabs.value[index].market_id;
+        router.push({ name: 'mainview', params: { market_id: tabs.value[index].market_id.replace(/\./g, '_') } });
     } else {
         selectedTabId.value = false;
+        router.push({ name: 'mainviewempty' });
     }
     tabs.value = tabs.value.filter((tab) => tab.market_id !== marketId);
 }
@@ -159,12 +174,12 @@ const doCloseTab = (marketId) => {
         </button>
 
         <div class="flex justify-content-center">
-            <TabView v-model:activeIndex="activeTabIndex">
-                <TabPanel v-for="tab in tabs" :key="tab.market_id">
+            <TabView pt:panelContainer:class="topbar_tab_panel" @tab-change="onTabChange" v-model:activeIndex="activeTabIndex">
+                <TabPanel v-for="tab in tabs" :key="tab.market_id" >
                     <template #header>
-                        <span @click="onTabClick(tab.market_id)">
+                        <span>
                             {{ tab.host_name }}
-                            {{ tab.guset_name }}
+                            {{ tab.guest_name }}
                         </span>
                         <Button icon="pi pi-times" class="p-button-rounded p-button-text p-ml-2" @click.stop="doCloseTab(tab.market_id)" />
                     </template>
@@ -180,5 +195,8 @@ const doCloseTab = (marketId) => {
     padding-right: 7px;
     padding-top: 5px;
     padding-bottom: 5px; 
+}
+.topbar_tab_panel {
+    padding: 0;
 }
 </style>

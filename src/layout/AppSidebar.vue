@@ -94,7 +94,8 @@ const doCloseTab = (marketId) => {
         } else {
             index++;
         }
-        selectedTabId.value = tabs.value[index];
+        selectedTabId.value = tabs.value[index].market_id;
+        router.push({ name: 'mainview', params: { market_id: tabs.value[index].market_id.replace(/\./g, '_') } });
     } else {
         selectedTabId.value = false;
     }
@@ -114,7 +115,8 @@ const doOpenTab = (marketId) => {
             if (findItem !== undefined) {
                 tabs.value.push(findItem);
                 selectedTabId.value = findItem.market_id;
-                router.push({ name: 'mainview', params: { market_id: marketId } });
+                console.log(encodeURIComponent(marketId));
+                router.push({ name: 'mainview', params: { market_id: marketId.replace(/\./g, '_') } });
             }
         }
     }
@@ -122,8 +124,8 @@ const doOpenTab = (marketId) => {
 </script>
 
 <template>
-    <Calendar v-model="date" :selectOtherMonths="true" :minDate="minDate" :maxDate="maxDate" dateFormat="yy-mm-dd" placeholder="请先选择一个日期" />
-    <Button v-if="showFilterButton" label="按联赛筛选" @click="showDialog = true"></Button>
+    <Calendar v-model="date" class="side_bar_calender" showIcon :selectOtherMonths="true" :minDate="minDate" :maxDate="maxDate" dateFormat="yy-mm-dd" placeholder="请先选择一个日期" />
+    <Button v-if="showFilterButton" class="ml-5" icon="pi pi-filter" @click="showDialog = true"></Button>
     <Dialog header="按联赛筛选" v-model:visible="showDialog" :style="{ width: '50vw' }" closable :modal="true" :dismissable-mask="true">
         <div>
             <div class="card flex flex-wrap justify-content-center gap-3">
@@ -143,21 +145,42 @@ const doOpenTab = (marketId) => {
         </div>
     </Dialog>
     <div v-for="match in filteredCompition" :key="match.market_id" class="match-card">
-        <Card>
+        <Card pt:body:class="pl-0 pr-0">
             <template #content>
-                <div>{{ match.compition_name }} 队伍: {{ match.host_name }} VS {{ match.guest_name }} </div>
-                <div>
-                    开赛时间: {{ match.compition_time }}
-                    <button v-if="isTabOpen(match.market_id)" @click="doCloseTab(match.market_id)">关闭</button>
-                    <button v-else @click="doOpenTab(match.market_id)">打开</button>
+                <div class="flex flex-row justify-content-between align-items-center">
+                    <div class="flex flex-column row-gap-1" >
+                        <div>
+                            <div class="flex align-items-center overflow-hidden white-space-nowrap text-overflow-ellipsis side_bar_compition">
+                                <div class="border-double pl-1 pr-1">{{ match.compition_name }}</div> 
+                                <div class="ml-1 text-overflow-ellipsis">{{ match.host_name }}VS{{ match.guest_name }}这是测试数据</div>
+                            </div>
+                        </div>
+                        <div>
+                            <span>开赛时间: {{ match.compition_time }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <Button class="ml-2 side_bar_op_button" v-if="isTabOpen(match.market_id)" @click="doCloseTab(match.market_id)">关闭</Button>
+                        <Button class="ml-2 side_bar_op_button" v-else @click="doOpenTab(match.market_id)">打开</Button>
+                    </div>
                 </div>
             </template>
         </Card>
     </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .match-card {
-  margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
+}
+.side_bar_calender {
+    width: 180px;
+}
+.side_bar_compition {
+    width: 190px;
+}
+.side_bar_op_button {
+    padding: 4px;
+    margin-right: 5px;
 }
 </style>

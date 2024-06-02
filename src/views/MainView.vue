@@ -1,14 +1,25 @@
 <script setup>
 //import router from '@/router';
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { onMounted, toRefs, watch } from 'vue';
+const props = defineProps({
+    market_id: {
+        type: String,
+        required: true
+    }
+});
+const { market_id } = toRefs(props);
+watch(
+    market_id, 
+    (newValue) => {
+        console.log('this is execute by onmounted' + newValue);
+    },
+    { immediate: true }
+);
 
-const route = useRoute();
-const t = ref('a');
 onMounted(() => {
-    console.log('this is execute by onmounted' + route.params.market_id);
+    //console.log('this is execute by onmounted' + route.params.market_id);
 });
 </script>
 <template>
-    <div>{{ t }}</div>
+    <div>{{ market_id }}</div>
 </template>
