@@ -12,5 +12,5 @@ defineProps({
 </script>
 
 <template>
-     <div>market_id : {{ market_id }} selection_id: {{ selection_id }}</div>
+     <div>k_line market_id : {{ market_id }} selection_id: {{ selection_id }}</div>
 </template>
