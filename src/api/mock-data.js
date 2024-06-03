@@ -120,5 +120,49 @@ export default [
                 message: 'test information'
             });
         }
+    },
+    {
+        url: '/api/getMarketMenu',
+        method: 'get',
+        response: () => {
+            return Mock.mock({
+                ret: 200,
+                // 1 必发数据 2欧赔数据 3北单数据
+                // default是否默认菜单 1
+                data: [
+                    {
+                        type: 1,
+                        defalut: 1,
+                        menu_name: '主',
+                        selection_id: 55,
+                    },
+                    {
+                        type: 1,
+                        defalut: 0,
+                        menu_name: '客',
+                        selection_id: 555,
+                    },
+                    {
+                        type: 1,
+                        defalut: 0,
+                        menu_name: '和',
+                        selection_id: 5555,
+                    },
+                    {
+                        type: 2,
+                        defalut: 0,
+                        menu_name: '欧',
+                        sid: 55556,
+                    },
+                    {
+                        type: 3,
+                        defalut: 0,
+                        menu_name: '北',
+                        sid: 55555,
+                    },
+                ],
+                message: 'test information'
+            });
+        }
     }
 ]

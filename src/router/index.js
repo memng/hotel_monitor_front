@@ -20,6 +20,26 @@ const router = createRouter({
                             market_id: marketId
                         };
                     },
+                    children:[
+                        {
+                            path: 'bf/:market_id/:selection_id',
+                            name: 'mainbf',
+                            component: () => import('@/views/main/MainBf.vue'),
+                            props: true
+                        },
+                        {
+                            path: 'odds/:sid',
+                            name: 'mainodds',
+                            component: () => import('@/views/main/MainOdds.vue'),
+                            props: true
+                        },
+                        {
+                            path: 'bd/:sid',
+                            name: 'maninbd',
+                            component: () => import('@/views/main/MainBd.vue'),
+                            props: true
+                        }
+                    ]
                 },
                 {
                     path: 'mainempty',

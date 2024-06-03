@@ -1,24 +1,28 @@
 <script setup>
-import router from '@/router';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, toRefs, watch, ref } from 'vue';
-const toast = useToast();
+import { toRefs, watch, ref } from 'vue';
 const props = defineProps({
     market_id: {
         type: String,
         required: true
+    },
+    selection_id: {
+        type: Number,
+        required: true
     }
 });
-const { market_id } = toRefs(props);
-const menuItems = ref([]);
+const toast = useToast();
+const { selection_id } = toRefs(props);
+//1 raw graph 2 k_line
+const bfType = ref(1);
 watch(
-    market_id,
+    selection_id, 
     async (newValue) => {
         try {
             menuItems.value = await HttpService.get('/api/getMarketMenu', toast, { market_id: newValue });
             const foundItem = menuItems.value.find((item) => item.default === 1);
-            router.push({ name: 'mainbf', params: { market_id: newValue, selection_id: foundItem.selection_id } });
+            router.push({ name: 'mainbf', params: { selection_id: foundItem.selection_id } });
         } catch (error) {
             console.log('load getMarketMenu' + error.message);
         }
@@ -26,13 +30,7 @@ watch(
     { immediate: true }
 );
 
-onMounted(() => {
-    //console.log('this is execute by onmounted' + route.params.market_id);
-});
 </script>
-<template>
-    <div>
-        <Menu></Menu>
-        <router-view></router-view>
-    </div>
+
+<template>    
 </template>
