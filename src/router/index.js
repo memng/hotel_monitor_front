@@ -22,10 +22,16 @@ const router = createRouter({
                     },
                     children:[
                         {
-                            path: 'bf/:market_id/:selection_id',
+                            path: 'bf/:selection_id',
                             name: 'mainbf',
                             component: () => import('@/views/main/MainBf.vue'),
-                            props: true
+                            props: (route) => {
+                                // 通过父路由传递的参数已经包含 market_id
+                                return {
+                                    market_id: route.params.market_id,
+                                    selection_id: parseInt(route.params.selection_id)
+                                };
+                              }
                         },
                         {
                             path: 'odds/:sid',
