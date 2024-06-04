@@ -1,4 +1,6 @@
 <script setup>
+import * as echarts from 'echarts';
+import { ref, onMounted } from 'vue';
 defineProps({
     market_id: {
         type: String,
@@ -9,8 +11,174 @@ defineProps({
         required: true
     }
 });
+
+const chats = ref();
+
+onMounted(() => {
+    initChat();
+});
+
+function initChat(){
+    let selected = false;
+    // 获取图表容器
+    var chartContainer = chats.value;
+    // 初始化 ECharts 实例
+    var myChart = echarts.init(chartContainer);
+    var data = '';
+    var option = updataOption(data);
+    // 使用配置项绘制图表
+    myChart.setOption(option);
+    chartContainer.addEventListener('mouseover', () => {
+        selected = true;
+    });
+    chartContainer.addEventListener('mouseout', () => {
+        selected = false;
+    });
+    window.addEventListener('keydown', (params) => {
+        let nowOption = myChart.getOption();
+        let dataIndex = nowOption.xAxis[0].axisPointer.value;
+        if (!selected) return;
+        switch (params.keyCode) {
+            // 左
+            case 37:
+                dataIndex = dataIndex > 0 ? --dataIndex : 0;
+                break;
+            // 左
+            case 39:
+                dataIndex < data.length - 1 ? ++dataIndex : data.length - 1;
+                break;
+            default:
+                break;
+        }
+        option.xAxis.axisPointer.value = dataIndex;
+        option.dataZoom[0]['start'] = nowOption.dataZoom[0]['start'];
+        option.dataZoom[0]['end'] = nowOption.dataZoom[0]['end'];
+        option.dataZoom[1]['start'] = nowOption.dataZoom[1]['start'];
+        option.dataZoom[1]['end'] = nowOption.dataZoom[1]['end'];
+        myChart.setOption(option);
+        myChart.dispatchAction({
+            seriesIndex: 0,
+            type: 'showTip',
+            dataIndex,
+        });
+    });
+}
+
+function updataOption(data){
+    // 提取各列数据
+    var rawTimeData = data.map((item) => moment(item.raw_timestamp).format('MM-DD HH:mm:ss.SSS')); 
+    var priceData = data.map((item) => item.price);
+    var volumeData = data.map((item) => item.volume);
+    var propertyData = data.map((item) => item.property);
+    var symbolData = data.map((item) => item.symbol);
+
+    // 配置项
+    var option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross' // 显示阴影
+            },
+            formatter: function (params) {
+                var dataIndex = params[0].dataIndex;
+                var price = priceData[dataIndex];
+                var volume = volumeData[dataIndex];
+                var datetime = rawTimeData[dataIndex];
+                return `Price: ${price}<br>Volume: ${volume}<br>Datetime: ${datetime}`;
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: rawTimeData,
+            axisLabel: {
+                interval: 'auto' // 根据数据自动调整标签显示密度
+            },
+            axisPointer:{
+                value : 0
+            }
+        },
+        yAxis: [
+            {
+                type: 'value',
+                name: 'Price',
+                min: 1
+            },
+            {
+                type: 'value',
+                name: 'Volume'
+            }
+        ],
+        dataZoom: [
+            { // 第一个 dataZoom 组件
+                type: 'slider',
+                start: 0,
+                end: 100,
+                // 启用鼠标滚轮缩放
+                //zoomLock: false,
+                //zoomOnMouseWheel: true,
+                xAxisIndex: [0] // 表示这个 dataZoom 组件控制 第一个 和 第三个 xAxis
+            },
+            {
+                type: 'inside',
+                start: 0,
+                end: 100
+            }
+        ],
+        series: [
+            {
+                name: 'Price',
+                type: 'line',
+                data: priceData,
+                // 设置折线上的点的形状和大小
+                symbol: function (value, params) {
+                    var symbol = symbolData[params.dataIndex];
+                    // 根据symbol值为2的点标记出来
+                    if (symbol === 2) {
+                        return 'rect';
+                    }
+                    return 'circle';
+                },
+                symbolSize: function (value, params) {
+                    var symbol = symbolData[params.dataIndex];
+                    // 根据symbol值为2的点标记出来
+                    if (symbol === 2) {
+                        return 12;
+                    }
+                    return 5;
+                }
+            },
+            {
+                name: 'Volume',
+                type: 'bar',
+                yAxisIndex: 1,
+                data: volumeData,
+                itemStyle: {
+                    color: function (params) {
+                        var property = propertyData[params.dataIndex];
+                        if (property === 1) {
+                            return 'red';
+                        } else if (property === 2) {
+                            return 'green';
+                        } else if (property === 3) {
+                            return 'gray';
+                        } else if (property === 4) {
+                            return 'lightcoral'; // 浅红色
+                        } else if (property === 5) {
+                            return 'lightgreen'; // 浅绿色
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    return option;
+}
 </script>
 
 <template>
-     <div>rawGraph market_id : {{ market_id }} selection_id: {{ selection_id }}</div>
+    <div ref="chats"></div>
+    <div class="flex-auto">
+        <label for="calendar-24h" class="font-bold block mb-2"> 选择一个时间段进行统计</label>
+        <Calendar id="calendar-24h" v-model="datetime24h" showTime hourFormat="24" dateFormat="yy-mm-dd" selectionMode="range" :selectOtherMonths="true" />
+    </div>
 </template>
