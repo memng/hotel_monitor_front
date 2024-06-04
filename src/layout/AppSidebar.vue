@@ -115,7 +115,7 @@ const doOpenTab = (marketId) => {
             if (findItem !== undefined) {
                 tabs.value.push(findItem);
                 selectedTabId.value = findItem.market_id;
-                console.log(encodeURIComponent(marketId));
+                //console.log(encodeURIComponent(marketId));
                 router.push({ name: 'mainview', params: { market_id: marketId.replace(/\./g, '_') } });
             }
         }

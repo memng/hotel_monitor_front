@@ -1,7 +1,7 @@
 <script setup>
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, toRefs, watch, ref } from 'vue';
+import { onMounted, toRefs, watch, ref, shallowRef } from 'vue';
 import MainBf from './main/MainBf.vue';
 import MainOdds from './main/MainOdds.vue';
 import MainBd from './main/MainBd.vue';
@@ -16,8 +16,9 @@ const props = defineProps({
 const { market_id } = toRefs(props);
 const menuItems = ref([]);
 const activeIndex = ref();
-const currentComponent = ref();
+const currentComponent = shallowRef();
 const currentProps = ref();
+//const currntComponentKey = ref();
 
 watch(
     market_id,
@@ -36,9 +37,12 @@ watch(
     { immediate: true }
 );
 
+//watch(currentProps,(newValue) => {console.log(newValue)});
+
 function watchMarketMenu(marketMenu){
     const tmepList = [];
-    marketMenu.map((index, element) => {
+    marketMenu.map((element, index) => {
+        console.log(element);
         let param;
         let componentName;
         switch (element.type) {
@@ -63,10 +67,13 @@ function watchMarketMenu(marketMenu){
             command: () => {
                 currentComponent.value = componentName;
                 currentProps.value = param;
+                //console.log(currentComponent.value);
+                //console.log(currentProps.value);
             }
         });
     });
     menuItems.value = tmepList;
+    console.log(menuItems.value);
 }
 
 onMounted(() => {

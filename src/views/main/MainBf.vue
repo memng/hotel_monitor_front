@@ -1,5 +1,5 @@
 <script setup>
-import { watch, ref } from 'vue';
+import { watch, ref, toRefs } from 'vue';
 import RawGraph from '@/views/main/RawGraph.vue';
 import KLine from '@/views/main/KLine.vue';
 const props = defineProps({
@@ -14,30 +14,40 @@ const props = defineProps({
 });
 //1 raw graph 2 k_line
 const bfType = ref(1);
-const activeIndex = ref(1);
+const activeIndex = ref(0);
+const { market_id, selection_id } = toRefs(props);
 
-const items = [
+const items = ref([
     {
         label: '原',
+        type: 1,
         command: () => {
             bfType.value = 1;
         }
     },
     {
         label: 'K',
+        type: 2,
         command: () => {
             bfType.value = 2;
         }
     },
-];
+]);
 
-watch(props.selection_id, () => {
+watch(market_id, () => {
+    console.log('market_id' + market_id.value);
     bfType.value = 1;
+    activeIndex.value = items.value.findIndex((ele) => ele.type === 1);
+});
+watch(selection_id, () => {
+    console.log(selection_id.value);
+    bfType.value = 1;
+    activeIndex.value = items.value.findIndex((ele) => ele.type === 1);
 });
 </script>
 
 <template>
-    <TabMenu v-model="activeIndex" :model="items"></TabMenu>
-    <raw-graph v-if="bfType === 1" :market_id="market_id" :selection_id="selection_id"></raw-graph>
-    <k-line v-else :market_id="market_id" :selection_id="selection_id"></k-line>
+    <TabMenu v-model:activeIndex="activeIndex" :model="items"></TabMenu>
+    <raw-graph v-if="bfType === 1" :key="market_id + selection_id + '1'" :market_id="market_id" :selection_id="selection_id"></raw-graph>
+    <k-line v-else :key="market_id + selection_id + '2'" :market_id="market_id" :selection_id="selection_id"></k-line>
 </template>

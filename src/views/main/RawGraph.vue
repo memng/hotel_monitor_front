@@ -1,7 +1,11 @@
 <script setup>
 import * as echarts from 'echarts';
 import { ref, onMounted } from 'vue';
-defineProps({
+import HttpService from '@/service/HttpService';
+import { useToast } from 'primevue/usetoast';
+import moment from 'moment';
+
+const props = defineProps({
     market_id: {
         type: String,
         required: true
@@ -13,18 +17,27 @@ defineProps({
 });
 
 const chats = ref();
+const toast = useToast();
 
-onMounted(() => {
-    initChat();
+onMounted(async () => {
+    console.log('tttt');
+    const loadData = await initData();
+    initChat(loadData);
 });
+async function initData(){
+    return await HttpService.get('/api/getRawData', toast, { market_id: props.market_id, selection_id: props.selection_id });
+}
 
-function initChat(){
+function initChat(data){
     let selected = false;
     // 获取图表容器
     var chartContainer = chats.value;
+    if (!chartContainer) {
+        return;
+    }
+    //console.log(chartContainer);
     // 初始化 ECharts 实例
     var myChart = echarts.init(chartContainer);
-    var data = '';
     var option = updataOption(data);
     // 使用配置项绘制图表
     myChart.setOption(option);
@@ -33,6 +46,9 @@ function initChat(){
     });
     chartContainer.addEventListener('mouseout', () => {
         selected = false;
+    });
+    window.addEventListener('resize', () => {
+        myChart.resize();
     });
     window.addEventListener('keydown', (params) => {
         let nowOption = myChart.getOption();
@@ -176,9 +192,15 @@ function updataOption(data){
 </script>
 
 <template>
-    <div ref="chats"></div>
+    <div class="raw_graph_chat" ref="chats"></div>
     <div class="flex-auto">
         <label for="calendar-24h" class="font-bold block mb-2"> 选择一个时间段进行统计</label>
         <Calendar id="calendar-24h" v-model="datetime24h" showTime hourFormat="24" dateFormat="yy-mm-dd" selectionMode="range" :selectOtherMonths="true" />
     </div>
 </template>
+<style lang="scss" scoped>
+.raw_graph_chat {
+    width: 100%;
+    height: 600px;
+}
+</style>
