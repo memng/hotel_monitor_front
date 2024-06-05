@@ -19,7 +19,9 @@ const props = defineProps({
 const chats = ref();
 const toast = useToast();
 const datetime24h = ref();
-const statData = ref();
+const statData = ref({});
+const selectionName = ref();
+const amountItem = ref();
 const configMap = {
     between0_100_sum: '0-100订单总和',
     between100_1000_sum: '100-1000订单总和',
@@ -45,13 +47,25 @@ const tableData = computed(() => {
 onMounted(async () => {
     const loadData = await initData();
     initChat(loadData);
+    initAmountStat();
 });
+async function initAmountStat(){
+    const result = await HttpService.get('/api/getAmountStat', toast, { market_id: props.market_id, selection_id: props.selection_id });
+    amountItem.value = result.amount_stat;
+    selectionName.value = result.selection_name; 
+}
 async function initData(){
     return await HttpService.get('/api/getRawData', toast, { market_id: props.market_id, selection_id: props.selection_id });
 }
 
+async function refreshChat() {
+    const loadData = await initData();
+    initChat(loadData);
+}
+
 async function dealSelectDate(dateParam){
     console.log(dateParam);
+    console.log(datetime24h.value);
     const params = {
         market_id: props.market_id,
         selection_id: props.selection_id,
@@ -220,34 +234,78 @@ function updataOption(data){
     };
     return option;
 }
+
+function calculatePercentageDifference(a1, a2) {
+    a1 = parseFloat(a1);
+    a2 = parseFloat(a2);
+    var difference = a1 - a2;
+    var total = a1 + a2;
+    var percentageDifference = (difference / total) * 100;
+    return percentageDifference.toFixed(1); // 保留一位小数
+}
+function calculateDiff(a1,a2){
+    a1 = parseFloat(a1);
+    a2 = parseFloat(a2);
+    return (a1 - a2).toFixed(1);
+}
 </script>
 
 <template>
-    <div class="flex">
+    <div class="flex flex-row justify-content-center align-content-center">
         <!--名称和刷新按钮-->
-        <div>
-            <span></span>
-        </div>
-        <div><Button label="刷新"></Button></div>
+        <span class="p-2 mr-6 vertical-align-middle">{{ selectionName }}</span>
+        <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
     </div>
     <div class="raw_graph_chat" ref="chats"></div>
     <!--整体统计-->
-    <div></div>
+    <div>
+        <DataTable v-if="amountItem !== undefined" :value="amountItem" showGridlines tableStyle="min-width: 50rem">
+            <Column field="selection_name" header="队伍"></Column>
+            <Column field="amount" header="总量"></Column>
+            <Column field="amount_percent" header="总量占比"></Column>
+            <Column field="pure_amount" header="总量(3500以下)"></Column>
+            <Column field="pure_amount_percent" header="总量占比(3500以下)"></Column>
+        </DataTable>
+    </div>
     <div class="flex-auto">
-        <label for="calendar-24h" class="font-bold block mb-2"> 选择一个时间段进行统计</label>
-        <Calendar id="calendar-24h" v-model="datetime24h" showTime hourFormat="24" dateFormat="yy-mm-dd" selectionMode="range" :selectOtherMonths="true" @date-select="dealSelectDate()" />
+        <Calendar
+            id="calendar-24h"
+            showIcon
+            placeholder="选择一个时间段进行统计"
+            v-model="datetime24h"
+            showTime
+            hourFormat="24"
+            dateFormat="yy-mm-dd"
+            selectionMode="range"
+            :selectOtherMonths="true"
+            @date-select="dealSelectDate"
+            inputClass="raw_graph_time_button"
+        />
     </div>
     <div>
-        <DataTable :value="tableData" showGridlines tableStyle="min-width: 50rem">
+        <DataTable v-if="Object.keys(statData) !== 0" :value="tableData" showGridlines tableStyle="min-width: 50rem">
             <Column field="key" header="区间"></Column>
             <Column field="pure_buy" header="买"></Column>
             <Column field="pure_sell" header="卖"></Column>
+            <Column header="差值">
+                <template #body="slotProps">
+                    {{ calculateDiff(slotProps.data.pure_buy, slotProps.data.pure_sell) }}
+                </template>
+            </Column>
+            <Column header="差值百分比">
+                <template #body="slotProps">
+                    {{ calculatePercentageDifference(slotProps.data.pure_buy, slotProps.data.pure_sell) }}
+                </template>
+            </Column>
         </DataTable>
     </div>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 .raw_graph_chat {
     width: 100%;
     height: 600px;
+}
+.raw_graph_time_button {
+    width: 400px;
 }
 </style>

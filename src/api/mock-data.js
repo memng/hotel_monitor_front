@@ -440,22 +440,71 @@ export default [
             });
         }
     },
+    {
+        url: '/api/getAmountStat',
+        method: 'get',
+        response: () => {
+            return Mock.mock({
+                ret: 200,
+                data: {
+                    selection_name: '尤文图斯',
+                    amount_stat: [
+                        {
+                            selection_name: '尤文',
+                            amount: 192.5,
+                            amount_percent: 80,
+                            pure_amount: 182.5,
+                            pure_amount_percent: 70,
+                        },
+                        {
+                            selection_name: '蒙扎',
+                            amount: 192.5,
+                            amount_percent: 10,
+                            pure_amount: 182.5,
+                            pure_amount_percent: 70,
+                        },
+                        {
+                            selection_name: '和局',
+                            amount: 192.5,
+                            amount_percent: 10,
+                            pure_amount: 182.5,
+                            pure_amount_percent: 70,
+                        },
+                    ]
+                },
+                message: 'test information'
+            });
+        }
+    },
+    {
+        url: '/api/getKLineGrowthStat',
+        method: 'get',
+        response: () => {
+            return Mock.mock({
+                ret: 200,
+                data: {
+                    selection_name: '尤文图斯',
+                    amount_stat: [
+                        {
+                            "s_trends_graph_id": 193870,
+                            "begin_time": "06/02 01:37:00",
+                            "direction_type": 2,
+                            "price": "1.49",
+                            "grow_quantity": "3321.5400",
+                            "symbol": 1
+                        },
+                        {
+                            "s_trends_graph_id": 194992,
+                            "begin_time": "06/02 04:49:00",
+                            "direction_type": 2,
+                            "price": "1.51",
+                            "grow_quantity": "2040.5200",
+                            "symbol": 1
+                        }
+                    ]
+                },
+                message: 'test information'
+            });
+        }
+    },
 ]
-{
-"id":189046,
-"market_id":"1.229407391",
-"selection_id":215817,
-"begin_time":"2024-06-01 12:13:00",
-"open_price":"1.51",
-"close_price":"1.51",
-"high_price":null,
-"low_price":null,
-"quality":"0.0000",
-"ask_list":"[[1.51,48.3],[1.52,578.06],[1.53,1089.78]]",
-"bid_list":"[[1.5,2452.21],[1.49,2897.55],[1.48,3167.35]]",
-"last_trade_time_raw":1717215085242,
-"last_trade_time":"2024-06-01 12:11:25",
-"last_trade_price":"1.51",
-"market_total_quality":"46120.3000",
-"create_time":"2024-06-01 12:13:01"
-}
