@@ -34,13 +34,7 @@ const items = ref([
     },
 ]);
 
-watch(market_id, () => {
-    console.log('market_id' + market_id.value);
-    bfType.value = 1;
-    activeIndex.value = items.value.findIndex((ele) => ele.type === 1);
-});
-watch(selection_id, () => {
-    console.log(selection_id.value);
+watch([market_id, selection_id], () => {
     bfType.value = 1;
     activeIndex.value = items.value.findIndex((ele) => ele.type === 1);
 });

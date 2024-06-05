@@ -329,5 +329,133 @@ export default [
                 message: 'test information'
             });
         }
-    }
+    },
+    {
+        url: '/api/getRawStat',
+        method: 'get',
+        response: () => {
+            return Mock.mock({
+                ret: 200,
+                data: {
+                    "between0_100_sum": {
+                        "pure_buy": "537.63",
+                        "pure_sell": "811.95",
+                        "pure_buy_self": "2309.49"
+                    },
+                    "between100_1000_sum": {
+                        "pure_buy": "6626.10",
+                        "pure_sell": "1497.54",
+                        "pure_buy_self": null
+                    },
+                    "between1000_2000_sum": {
+                        "pure_buy": "2428.48",
+                        "pure_sell": null,
+                        "pure_buy_self": null
+                    },
+                    "all_between0_1000_sum": {
+                        "pure_buy": "7163.73",
+                        "pure_sell": "2309.49",
+                        "pure_buy_self": "2309.49"
+                    },
+                    "all_between0_2000_sum": {
+                        "pure_buy": "9592.21",
+                        "pure_sell": "2309.49",
+                        "pure_buy_self": "2309.49"
+                    },
+                    "between0_100_count": {
+                        "pure_buy_self": 35,
+                        "pure_buy": 16,
+                        "pure_sell": 25
+                    },
+                    "between100_1000_count": {
+                        "pure_buy_self": 0,
+                        "pure_buy": 21,
+                        "pure_sell": 10
+                    },
+                    "between1000_2000_count": {
+                        "pure_buy_self": 0,
+                        "pure_buy": 2,
+                        "pure_sell": 0
+                    },
+                    "all_between0_1000_count": {
+                        "pure_buy_self": 35,
+                        "pure_buy": 37,
+                        "pure_sell": 35
+                    },
+                    "all_between0_2000_count": {
+                        "pure_buy_self": 35,
+                        "pure_buy": 39,
+                        "pure_sell": 35
+                    }
+                },
+                message: 'test information'
+            });
+        }
+    },
+    {
+        url: '/api/getKLine',
+        method: 'get',
+        response: () => {
+            return Mock.mock({
+                ret: 200,
+                data: [
+                    {
+                        "id":188968,
+                        "market_id":"1.229407391",
+                        "selection_id":215817,
+                        "begin_time":"2024-06-01 12:00:00",
+                        "open_price":"1.51",
+                        "close_price":"1.51",
+                        "high_price":null,
+                        "low_price":null,
+                        "quality":"0.0000",
+                        "ask_list":"[[1.51,48.3],[1.52,525.01],[1.53,934.55]]",
+                        "bid_list":"[[1.5,2392.21],[1.49,2759.3],[1.48,2963.47]]",
+                        "last_trade_time_raw":1717213861185,
+                        "last_trade_time":"2024-06-01 11:51:01",
+                        "last_trade_price":"1.51",
+                        "market_total_quality":"45852.8300",
+                        "create_time":"2024-06-01 12:00:02"
+                    },
+                    {
+                        "id":189046,
+                        "market_id":"1.229407391",
+                        "selection_id":215817,
+                        "begin_time":"2024-06-01 12:13:00",
+                        "open_price":"1.51",
+                        "close_price":"1.51",
+                        "high_price":null,
+                        "low_price":null,
+                        "quality":"0.0000",
+                        "ask_list":"[[1.51,48.3],[1.52,578.06],[1.53,1089.78]]",
+                        "bid_list":"[[1.5,2452.21],[1.49,2897.55],[1.48,3167.35]]",
+                        "last_trade_time_raw":1717215085242,
+                        "last_trade_time":"2024-06-01 12:11:25",
+                        "last_trade_price":"1.51",
+                        "market_total_quality":"46120.3000",
+                        "create_time":"2024-06-01 12:13:01"
+                    }
+                ],
+                message: 'test information'
+            });
+        }
+    },
 ]
+{
+"id":189046,
+"market_id":"1.229407391",
+"selection_id":215817,
+"begin_time":"2024-06-01 12:13:00",
+"open_price":"1.51",
+"close_price":"1.51",
+"high_price":null,
+"low_price":null,
+"quality":"0.0000",
+"ask_list":"[[1.51,48.3],[1.52,578.06],[1.53,1089.78]]",
+"bid_list":"[[1.5,2452.21],[1.49,2897.55],[1.48,3167.35]]",
+"last_trade_time_raw":1717215085242,
+"last_trade_time":"2024-06-01 12:11:25",
+"last_trade_price":"1.51",
+"market_total_quality":"46120.3000",
+"create_time":"2024-06-01 12:13:01"
+}

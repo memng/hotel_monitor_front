@@ -1,6 +1,6 @@
 <script setup>
 import * as echarts from 'echarts';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
 import moment from 'moment';
@@ -18,14 +18,45 @@ const props = defineProps({
 
 const chats = ref();
 const toast = useToast();
+const datetime24h = ref();
+const statData = ref();
+const configMap = {
+    between0_100_sum: '0-100订单总和',
+    between100_1000_sum: '100-1000订单总和',
+    between1000_2000_sum: '1000-2000订单总和',
+    all_between0_1000_sum: '0-1000订单总和',
+    all_between0_2000_sum: '0-2000订单总和',
+    between0_100_count: '0-100订单数量',
+    between100_1000_count: '100-1000订单数量',
+    between1000_2000_count: '1000-2000订单数量',
+    all_between0_1000_count: '0-1000订单数量',
+    all_between0_2000_count: '0-2000订单数量',
+
+}
+const tableData = computed(() => {
+    return Object.keys(statData.value).map((key) => {
+        return {
+            key: configMap[key],
+            ...statData.value[key]
+        };
+    });
+})
 
 onMounted(async () => {
-    console.log('tttt');
     const loadData = await initData();
     initChat(loadData);
 });
 async function initData(){
     return await HttpService.get('/api/getRawData', toast, { market_id: props.market_id, selection_id: props.selection_id });
+}
+
+async function dealSelectDate(dateParam){
+    console.log(dateParam);
+    const params = {
+        market_id: props.market_id,
+        selection_id: props.selection_id,
+    };
+    statData.value = await HttpService.get('/api/getRawStat', toast, params);
 }
 
 function initChat(data){
@@ -192,10 +223,26 @@ function updataOption(data){
 </script>
 
 <template>
+    <div class="flex">
+        <!--名称和刷新按钮-->
+        <div>
+            <span></span>
+        </div>
+        <div><Button label="刷新"></Button></div>
+    </div>
     <div class="raw_graph_chat" ref="chats"></div>
+    <!--整体统计-->
+    <div></div>
     <div class="flex-auto">
         <label for="calendar-24h" class="font-bold block mb-2"> 选择一个时间段进行统计</label>
-        <Calendar id="calendar-24h" v-model="datetime24h" showTime hourFormat="24" dateFormat="yy-mm-dd" selectionMode="range" :selectOtherMonths="true" />
+        <Calendar id="calendar-24h" v-model="datetime24h" showTime hourFormat="24" dateFormat="yy-mm-dd" selectionMode="range" :selectOtherMonths="true" @date-select="dealSelectDate()" />
+    </div>
+    <div>
+        <DataTable :value="tableData" showGridlines tableStyle="min-width: 50rem">
+            <Column field="key" header="区间"></Column>
+            <Column field="pure_buy" header="买"></Column>
+            <Column field="pure_sell" header="卖"></Column>
+        </DataTable>
     </div>
 </template>
 <style lang="scss" scoped>
