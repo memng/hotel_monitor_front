@@ -333,6 +333,16 @@ function initChat(rawData){
     // 使用配置项显示图表
     myChart.setOption(option);
     chartContainer.addEventListener('mouseover', () => {
+        // 创建一个新的点击事件
+        let clickEvent = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
+        // 触发图表的点击事件
+        chartContainer.dispatchEvent(clickEvent);
+        // 设置图表元素为焦点
+        chartContainer.focus();
         selected = true;
     });
     chartContainer.addEventListener('mouseout', () => {
@@ -348,10 +358,12 @@ function initChat(rawData){
             // 左
             case 'ArrowLeft':
                 dataIndex = dataIndex > 0 ? --dataIndex : 0;
+                params.stopPropagation();
                 break;
             // 左
             case 'ArrowRight':
                 dataIndex < rawData.length - 1 ? ++dataIndex : rawData.length - 1;
+                params.stopPropagation();
                 break;
             default:
                 break;
@@ -380,17 +392,15 @@ function initChat(rawData){
         <span class="p-2 mr-6 vertical-align-middle">{{ selectionName }}</span>
         <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
     </div>
-    <div class="raw_graph_chat" ref="chats"></div>
-    <div class="k_line_chat" ref="chats"></div>
+    <div tabindex="1" class="k_line_chat" ref="chats"></div>
     <!--增长统计-->
     <div>
-        <DataTable v-if="growthTable.value !== undefined" :value="growthTable" showGridlines tableStyle="min-width: 50rem">
+        <DataTable v-if="growthTable !== undefined" :value="growthTable" showGridlines tableStyle="min-width: 50rem">
             <Column field="begin_time" header="时间"></Column>
             <Column header="方向">
                 <template #body="slotProps">
                     <span v-if="slotProps.data.direction_type === 1">买</span>
                     <span v-else>卖</span>
-                    {{ calculateDiff(slotProps.data.pure_buy, slotProps.data.pure_sell) }}
                 </template>
             </Column>
             <Column field="price" header="价位"></Column>
@@ -403,12 +413,12 @@ function initChat(rawData){
             </Column>
         </DataTable>
     </div>
-    <div>k_line market_id : {{ market_id }} selection_id: {{ selection_id }}</div>
 </template>
 
 <style lang="scss" scoped>
 .k_line_chat {
     width: 100%;
     height: 600px;
+    outline-color: var(--primary-color);
 }
 </style>

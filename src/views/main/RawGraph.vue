@@ -19,7 +19,7 @@ const props = defineProps({
 const chats = ref();
 const toast = useToast();
 const datetime24h = ref();
-const statData = ref({});
+const statData = ref([]);
 const selectionName = ref();
 const amountItem = ref();
 let chartContainer;
@@ -46,6 +46,7 @@ const tableData = computed(() => {
         };
     });
     console.log(afterDeal);
+    console.log(Object.keys(afterDeal));
     return afterDeal;
 })
 
@@ -78,7 +79,6 @@ async function refreshChat() {
 
 async function dealSelectDate(){
     const isSelectOver = datetime24h.value.every((ele) => ele instanceof Date);
-    console.log(isSelectOver);
     if (isSelectOver) {
         const params = {
             market_id: props.market_id,
@@ -102,6 +102,16 @@ function initChat(data) {
     // 使用配置项绘制图表
     myChart.setOption(option);
     chartContainer.addEventListener('mouseover', () => {
+        // 创建一个新的点击事件
+        let clickEvent = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
+        // 触发图表的点击事件
+        chartContainer.dispatchEvent(clickEvent);
+        // 设置图表元素为焦点
+        chartContainer.focus();
         selected = true;
     });
     chartContainer.addEventListener('mouseout', () => {
@@ -118,10 +128,12 @@ function initChat(data) {
             // 左
             case 'ArrowLeft':
                 dataIndex = dataIndex > 0 ? --dataIndex : 0;
+                params.stopPropagation();
                 break;
             // 左
             case 'ArrowRight':
                 dataIndex < data.length - 1 ? ++dataIndex : data.length - 1;
+                params.stopPropagation();
                 break;
             default:
                 break;
@@ -271,7 +283,7 @@ function calculateDiff(a1,a2){
         <span class="p-2 mr-6 vertical-align-middle">{{ selectionName }}</span>
         <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
     </div>
-    <div class="raw_graph_chat" ref="chats"></div>
+    <div tabindex="1" class="raw_graph_chat" ref="chats"></div>
     <!--整体统计-->
     <div>
         <DataTable v-if="amountItem !== undefined" :value="amountItem" showGridlines tableStyle="min-width: 50rem">
@@ -293,12 +305,13 @@ function calculateDiff(a1,a2){
             dateFormat="yy-mm-dd"
             selectionMode="range"
             :selectOtherMonths="true"
+            :hideOnRangeSelection="true"
             @date-select="dealSelectDate"
             inputClass="raw_graph_time_button"
         />
     </div>
     <div>
-        <DataTable v-if="Object.keys(statData) !== 0" :value="tableData" showGridlines tableStyle="min-width: 50rem">
+        <DataTable v-if="statData.length !== 0" :value="tableData" showGridlines tableStyle="min-width: 50rem">
             <Column field="key" header="区间"></Column>
             <Column field="pure_buy" header="买"></Column>
             <Column field="pure_sell" header="卖"></Column>
@@ -319,6 +332,7 @@ function calculateDiff(a1,a2){
 .raw_graph_chat {
     width: 100%;
     height: 600px;
+    outline-color: var(--primary-color);
 }
 .raw_graph_time_button {
     width: 400px;
