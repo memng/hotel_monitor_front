@@ -1,6 +1,6 @@
 <script setup>
 import * as echarts from 'echarts';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
 import moment from 'moment';
@@ -22,6 +22,8 @@ const datetime24h = ref();
 const statData = ref({});
 const selectionName = ref();
 const amountItem = ref();
+let chartContainer;
+let myChart;
 const configMap = {
     between0_100_sum: '0-100订单总和',
     between100_1000_sum: '100-1000订单总和',
@@ -36,53 +38,66 @@ const configMap = {
 
 }
 const tableData = computed(() => {
-    return Object.keys(statData.value).map((key) => {
+    console.log(statData.value);
+    const afterDeal = Object.keys(statData.value).map((key) => {
         return {
             key: configMap[key],
             ...statData.value[key]
         };
     });
+    console.log(afterDeal);
+    return afterDeal;
 })
+
+watch(chats, (newValue) => {
+    if (newValue) {
+        chartContainer = newValue;
+        myChart = echarts.init(chartContainer);
+    }
+});
 
 onMounted(async () => {
     const loadData = await initData();
     initChat(loadData);
     initAmountStat();
 });
-async function initAmountStat(){
+async function initAmountStat() {
     const result = await HttpService.get('/api/getAmountStat', toast, { market_id: props.market_id, selection_id: props.selection_id });
     amountItem.value = result.amount_stat;
-    selectionName.value = result.selection_name; 
+    selectionName.value = result.selection_name;
 }
-async function initData(){
+async function initData() {
     return await HttpService.get('/api/getRawData', toast, { market_id: props.market_id, selection_id: props.selection_id });
 }
 
 async function refreshChat() {
     const loadData = await initData();
     initChat(loadData);
+    initAmountStat();
 }
 
-async function dealSelectDate(dateParam){
-    console.log(dateParam);
-    console.log(datetime24h.value);
-    const params = {
-        market_id: props.market_id,
-        selection_id: props.selection_id,
-    };
-    statData.value = await HttpService.get('/api/getRawStat', toast, params);
+async function dealSelectDate(){
+    const isSelectOver = datetime24h.value.every((ele) => ele instanceof Date);
+    console.log(isSelectOver);
+    if (isSelectOver) {
+        const params = {
+            market_id: props.market_id,
+            selection_id: props.selection_id,
+            start_date: moment(datetime24h.value[0]).format('YYYY-MM-DD'),
+            end_date: moment(datetime24h.value[1]).format('YYYY-MM-DD')
+        };
+        statData.value = await HttpService.get('/api/getRawStat', toast, params);
+    }
 }
 
-function initChat(data){
-    let selected = false;
-    // 获取图表容器
-    var chartContainer = chats.value;
-    if (!chartContainer) {
+function initChat(data) {
+    if (!chartContainer || !myChart) {
         return;
     }
+    let selected = false;
+    // 获取图表容器
     //console.log(chartContainer);
     // 初始化 ECharts 实例
-    var myChart = echarts.init(chartContainer);
     var option = updataOption(data);
     // 使用配置项绘制图表
     myChart.setOption(option);
@@ -99,13 +114,13 @@ function initChat(data){
         let nowOption = myChart.getOption();
         let dataIndex = nowOption.xAxis[0].axisPointer.value;
         if (!selected) return;
-        switch (params.keyCode) {
+        switch (params.code) {
             // 左
-            case 37:
+            case 'ArrowLeft':
                 dataIndex = dataIndex > 0 ? --dataIndex : 0;
                 break;
             // 左
-            case 39:
+            case 'ArrowRight':
                 dataIndex < data.length - 1 ? ++dataIndex : data.length - 1;
                 break;
             default:

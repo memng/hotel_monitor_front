@@ -484,7 +484,7 @@ export default [
                 ret: 200,
                 data: {
                     selection_name: '尤文图斯',
-                    amount_stat: [
+                    growth_stat: [
                         {
                             "s_trends_graph_id": 193870,
                             "begin_time": "06/02 01:37:00",

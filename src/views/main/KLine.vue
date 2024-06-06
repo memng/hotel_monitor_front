@@ -1,11 +1,15 @@
 <script setup>
 import * as echarts from 'echarts';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
 
 const chats = ref();
 const toast = useToast();
+const growthTable = ref();
+const selectionName = ref();
+let chartContainer;
+let myChart;
 
 const props = defineProps({
     market_id: {
@@ -18,22 +22,40 @@ const props = defineProps({
     }
 });
 
+watch(chats, (newValue) => {
+    if (newValue) {
+        chartContainer = newValue;
+        myChart = echarts.init(chartContainer);
+    }
+});
+
 onMounted(async () => {
     const loadData = await initData();
     initChat(loadData);
+    initGrowthTable();
 });
+
+async function refreshChat() {
+    const loadData = await initData();
+    initChat(loadData);
+    initGrowthTable();
+}
+
+async function initGrowthTable() {
+    const result = await HttpService.get('/api/getKLineGrowthStat', toast, { market_id: props.market_id, selection_id: props.selection_id });
+    growthTable.value = result.growth_stat;
+    selectionName.value = result.selection_name;
+}
+
 async function initData() {
     return await HttpService.get('/api/getKLine', toast, { market_id: props.market_id, selection_id: props.selection_id });
 }
 
 function initChat(rawData){
-    let selected = false;
-    // 初始化echarts
-    var chartContainer = chats.value;
-    if (!chartContainer) {
+    if (!chartContainer || !myChart) {
         return;
     }
-    var myChart = echarts.init(chartContainer);
+    let selected = false;
     var option;
     // 模拟数据
     var xAxisData = [];
@@ -48,7 +70,7 @@ function initChat(rawData){
     rawData.forEach(function (item) {
         var dateObject = new Date(item.begin_time);
         // 使用 Date 对象的方法来获取所需的格式
-        var formattedDate = (dateObject.getMonth() + 1) + "-" + dateObject.getDate() + " " + dateObject.getHours() + ":" + dateObject.getMinutes()+ ":" + dateObject.getSeconds();
+        var formattedDate = dateObject.getMonth() + 1 + '-' + dateObject.getDate() + ' ' + dateObject.getHours() + ':' + dateObject.getMinutes()+ ':' + dateObject.getSeconds();
         xAxisData.push(formattedDate);
         closePriceData.push(item.close_price);
         seriesData.push([
@@ -65,13 +87,13 @@ function initChat(rawData){
         var bidList = JSON.parse(item.bid_list);
         askListData.push(askList.reverse());
         bidListData.push(bidList);
-        askList.forEach(function(ask) {
+        askList.forEach(function (ask) {
             askSum += ask[1];
         });
-        bidList.forEach(function(bid) {
+        bidList.forEach(function (bid) {
             bidSum += bid[1];
         });
-        var percentage =100 - Math.floor((askSum / (askSum + bidSum)) * 100);
+        var percentage = 100 - Math.floor((askSum / (askSum + bidSum)) * 100);
         percentageData.push(percentage);
     });
 
@@ -87,19 +109,18 @@ function initChat(rawData){
                 link: { xAxisIndex: 'all' }
             },
             backgroundColor: 'rgba(255, 255, 255, 0.7)', 
-            formatter: function(params) {
-            
+            formatter: function (params) {
                 var dataIndex = params[0].dataIndex;
                 var ask_list = askListData[dataIndex];
                 var bid_list = bidListData[dataIndex];
-                var paramsData= seriesData[dataIndex];
+                var paramsData = seriesData[dataIndex];
                 var tooltipText = [
                     '时间: ' + xAxisData[dataIndex],
                     '最后成交:' + lastTradeTimeData[dataIndex],
                     '开盘价: ' + paramsData[0],
                     '收盘价: ' + paramsData[1],
                     '增长量: ' + volumeData[dataIndex],
-                    '百分比: ' +'买'+ (100-percentageData[dataIndex]) + '/卖'+ percentageData[dataIndex]
+                    '百分比: ' + '买' + (100 - percentageData[dataIndex]) + '/卖' + percentageData[dataIndex]
                 ];
 
                 // 添加 ask_list 和 bid_list 数据到 tooltip 中
@@ -139,7 +160,7 @@ function initChat(rawData){
                 top: '80%',
                 height: '10%'
             },
-            ],
+        ],
         xAxis: [
             {
                 type: 'category',
@@ -210,7 +231,7 @@ function initChat(rawData){
             },
             {
                 gridIndex: 2,
-                min: 0,   // 设置 Y 轴的最小值为 0
+                min: 0, // 设置 Y 轴的最小值为 0
                 max: 100, // 设置 Y 轴的最大值为 100
                 axisLabel: {
                     show: true
@@ -246,7 +267,6 @@ function initChat(rawData){
                     borderColor0: 'red', 
                     borderColorDoji: '#FFFF00'
                 },
-                
                 markPoint: {
                     symbol: 'pin',
                     symbolSize: 20,
@@ -255,8 +275,8 @@ function initChat(rawData){
                         { type: 'min', name: '最小值' }
                     ],
                     itemStyle: {
-                        color: 'green',     // 下跌时使用红色
-                        color0: 'red',   // 上升时使用绿色
+                        color: 'green', // 下跌时使用红色
+                        color0: 'red', // 上升时使用绿色
                         borderColor: 'green',
                         borderColor0: 'red', 
                         borderColorDoji: '#FFFF00'
@@ -312,31 +332,30 @@ function initChat(rawData){
 
     // 使用配置项显示图表
     myChart.setOption(option);
-    
-    chartContainer.addEventListener("mouseover", () => {
+    chartContainer.addEventListener('mouseover', () => {
         selected = true;
     });
-    chartContainer.addEventListener("mouseout", () => {
+    chartContainer.addEventListener('mouseout', () => {
         selected = false;
     });
 
-    window.addEventListener("keydown", (params) => {
+    window.addEventListener('keydown', (params) => {
         let nowOption = myChart.getOption();
         let dataIndex = nowOption.xAxis[0].axisPointer.value;
         if (!selected) return;
 
-        switch (params.keyCode) {
+        switch (params.code) {
             // 左
-            case 37:
-            dataIndex = dataIndex > 0 ? --dataIndex : 0;
-            break;
+            case 'ArrowLeft':
+                dataIndex = dataIndex > 0 ? --dataIndex : 0;
+                break;
             // 左
-            case 39:
-            dataIndex < rawData.length - 1 ? ++dataIndex : rawData.length - 1;
-            break;
+            case 'ArrowRight':
+                dataIndex < rawData.length - 1 ? ++dataIndex : rawData.length - 1;
+                break;
             default:
-            break;
-        }   
+                break;
+        }
         option.xAxis[0].axisPointer.value = dataIndex;
         option.xAxis[1].axisPointer.value = dataIndex;
         option.xAxis[2].axisPointer.value = dataIndex;
@@ -347,7 +366,7 @@ function initChat(rawData){
         myChart.setOption(option);
         myChart.dispatchAction({
             seriesIndex: 0,
-            type: "showTip",
+            type: 'showTip',
             dataIndex,
         });
     });
@@ -356,9 +375,34 @@ function initChat(rawData){
 </script>
 
 <template>
+    <div class="flex flex-row justify-content-center align-content-center">
+        <!--名称和刷新按钮-->
+        <span class="p-2 mr-6 vertical-align-middle">{{ selectionName }}</span>
+        <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
+    </div>
+    <div class="raw_graph_chat" ref="chats"></div>
     <div class="k_line_chat" ref="chats"></div>
     <!--增长统计-->
-    <div></div>
+    <div>
+        <DataTable v-if="growthTable.value !== undefined" :value="growthTable" showGridlines tableStyle="min-width: 50rem">
+            <Column field="begin_time" header="时间"></Column>
+            <Column header="方向">
+                <template #body="slotProps">
+                    <span v-if="slotProps.data.direction_type === 1">买</span>
+                    <span v-else>卖</span>
+                    {{ calculateDiff(slotProps.data.pure_buy, slotProps.data.pure_sell) }}
+                </template>
+            </Column>
+            <Column field="price" header="价位"></Column>
+            <Column field="grow_quantity" header="量"></Column>
+            <Column header="其他">
+                <template #body="slotProps">
+                    <span v-if="slotProps.data.symbol === 2" class="text-red-500">可能是重复</span>
+                    <span v-else>正常</span>
+                </template>
+            </Column>
+        </DataTable>
+    </div>
     <div>k_line market_id : {{ market_id }} selection_id: {{ selection_id }}</div>
 </template>
 
