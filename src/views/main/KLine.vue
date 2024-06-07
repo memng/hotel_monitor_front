@@ -39,6 +39,7 @@ async function refreshChat() {
     const loadData = await initData();
     initChat(loadData);
     initGrowthTable();
+    myChart.resize();
 }
 
 async function initGrowthTable() {

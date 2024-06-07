@@ -75,6 +75,7 @@ async function refreshChat() {
     const loadData = await initData();
     initChat(loadData);
     initAmountStat();
+    myChart.resize();
 }
 
 async function dealSelectDate(){
