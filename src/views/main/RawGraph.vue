@@ -271,7 +271,7 @@ function calculatePercentageDifference(a1, a2) {
     var percentageDifference = (difference / total) * 100;
     return percentageDifference.toFixed(1); // 保留一位小数
 }
-function calculateDiff(a1,a2){
+function calculateDiff(a1, a2) {
     a1 = parseFloat(a1);
     a2 = parseFloat(a2);
     return (a1 - a2).toFixed(1);

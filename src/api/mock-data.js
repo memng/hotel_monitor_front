@@ -507,4 +507,122 @@ export default [
             });
         }
     },
+    {
+        url: '/api/getOdds',
+        method: 'get',
+        response: () => {
+            return Mock.mock({
+                ret: 200,
+                //main 排在第一个
+                data: [ 
+                    {
+                        info: 'Name ex. Man City',
+                        data: [
+                            {
+                                create_time: '2024-05-28 01:37:00',
+                                avg_sp: 2.4
+                            },
+                            {
+                                create_time: '2024-05-28 01:38:00',
+                                avg_sp: 2.3
+                            },
+                        ]
+                    },
+                    {
+                        info: 'Name ex. draw',
+                        data: [
+                            {
+                                create_time: '2024-05-28 01:38:00',
+                                avg_sp: 2.4
+                            },
+                            {
+                                create_time: '2024-05-28 01:38:00',
+                                avg_sp: 2.3
+                            },
+                        ]
+                    },
+                    {
+                        info: 'Name ex. Man unit',
+                        data: [
+                            {
+                                create_time: '2024-05-28 01:38:00',
+                                avg_sp: 2.4
+                            },
+                            {
+                                create_time: '2024-05-28 01:38:00',
+                                avg_sp: 2.3
+                            },
+                        ]
+                    },
+                ],
+                message: 'test information'
+            });
+        }
+    },
+    {
+        url: '/api/getBd',
+        method: 'get',
+        response: () => {
+            return Mock.mock({
+                ret: 200,
+                data: {
+                    show_other: true,
+                    main: {
+                        info: 'Name ex. Man City',
+                        data: [
+                            {
+                                create_time: '2024-05-28 01:38:00',
+                                Ladbrokes: 67,
+                                William_Hill: 75,
+                                bd: 76
+                            },
+                            {
+                                create_time: '2024-05-28 01:38:00',
+                                Ladbrokes: 67,
+                                William_Hill: 75,
+                                bd: 76
+                            },
+                        ]
+                    },
+                    other:[
+                        {
+                            info: 'Name ex. draw',
+                            data: [
+                                {
+                                    create_time: '2024-05-28 01:38:00',
+                                    Ladbrokes: 67,
+                                    William_Hill: 75,
+                                    bd: 76
+                                },
+                                {
+                                    create_time: '2024-05-28 01:38:00',
+                                    Ladbrokes: 67,
+                                    William_Hill: 75,
+                                    bd: 76
+                                },
+                            ]
+                        },
+                        {
+                            info: 'Name ex. Man unit',
+                            data: [
+                                {
+                                    create_time: '2024-05-28 01:38:00',
+                                    Ladbrokes: 67,
+                                    William_Hill: 75,
+                                    bd: 76
+                                },
+                                {
+                                    create_time: '2024-05-28 01:38:00',
+                                    Ladbrokes: 67,
+                                    William_Hill: 75,
+                                    bd: 76
+                                },
+                            ]
+                        },
+                    ]
+                },
+                message: 'test information'
+            });
+        }
+    },
 ]
