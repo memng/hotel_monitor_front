@@ -108,9 +108,7 @@ function switchCurrentMenuItem(itemId, rangeConfig) {
     }
 }
 const toggle = (event) => {
-    if (menu.value) {
-        menu.value.toggle(event);
-    }
+    menu.value.toggle(event);
 };
 const isDateString = (str) => {
     return moment(str, 'YYYY-MM-DD', true).isValid();
@@ -156,36 +154,7 @@ const doCloseTab = (marketId) => {
     }
     tabs.value = tabs.value.filter((tab) => tab.market_id !== marketId);
 }
-//与右侧个人菜单栏相关
-const userInfo = sssObj.getUserInfo();
-const userInfoButtonLabel = userInfo.user_name;
-const userinfoMenu = ref();
-const userInfoItems = [
-    {
-        label: '个人中心',
-        command: () => {
-            router.push({ name: 'usercentre' });
-        }
-    },
-    {
-        label: '会员续费',
-        command: () => {
-            router.push({ name: 'goodsintro' });
-        }
-    },
-    {
-        label: '退出登录',
-        command: () => {
-            sssObj.clearAll();
-            router.push({ name: 'login'});
-        }
-    }
-];
-const toggleUserinfo = (event) => {
-    if (userinfoMenu.value) {
-        userinfoMenu.value.toggle(event);
-    }
-}
+
 </script>
 
 <template>
@@ -203,26 +172,19 @@ const toggleUserinfo = (event) => {
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
             <i class="pi pi-bars"></i>
         </button>
+
         <div class="flex justify-content-center">
-            <TabMenu :model="tabs" @tab-change="onTabChange" v-model:activeIndex="activeTabIndex" pt:menuitem:class="topbar_tab_item">
-                <template #item="{ item }">
-                    <a class="p-menuitem-link topbar_tab_link" >
-                        <span class="flex flex-row align-items-center p-menuitem-text topbar_tab_item_content">
-                            <span class="flex flex-column">
-                                <span class="p-1 topbar_tab_word">{{ item.host_name }} sdfsfsdfgdfghdfhfdhdf</span>
-                                <span class="p-1 topbar_tab_word" >{{ item.guest_name }}</span>
-                            </span>
-                            <span>
-                                <span class="pi pi-times p-2" @click.stop="doCloseTab(item.market_id)" />
-                            </span>
+            <TabView pt:panelContainer:class="topbar_tab_panel" @tab-change="onTabChange" v-model:activeIndex="activeTabIndex">
+                <TabPanel v-for="tab in tabs" :key="tab.market_id" >
+                    <template #header>
+                        <span class="topbar_tab_word">
+                            {{ tab.host_name }} sdfsfsdfgdfghdfhfdhdf<br>
+                            {{ tab.guest_name }}
                         </span>
-                    </a>
-                </template>
-            </TabMenu>
-        </div>
-        <div class="topbar_user">
-            <Button class="topbar_userinfo_button" icon="pi pi-angle-down" :label="userInfoButtonLabel" iconPos="right" @click="toggleUserinfo" />
-            <Menu ref="userinfoMenu" id="userinfo_menu" :model="userInfoItems" :popup="true" />
+                        <Button icon="pi pi-times" class="p-button-rounded p-button-text p-ml-2" @click.stop="doCloseTab(tab.market_id)" />
+                    </template>
+                </TabPanel>
+            </TabView>
         </div>
     </div>
 </template>
@@ -234,30 +196,13 @@ const toggleUserinfo = (event) => {
     padding-top: 5px;
     padding-bottom: 5px; 
 }
-.topbar_tab_item {
-    max-width: 120px;
-    padding: 2px;
-}
-.topbar_tab_link {
-    display: flex;
-    width: 100%;
-    border: none;
-}
-.topbar_tab_item_content {
-    //width: 60px;
+.topbar_tab_panel {
+    padding: 0;
 }
 .topbar_tab_word {
-    width: 100%;
-    height: 100%;
     max-width: 80px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-.topbar_user {
-    margin: 0 0 0 auto;
-    padding: 0;
-    list-style: none;
-    display: flex;
 }
 </style>

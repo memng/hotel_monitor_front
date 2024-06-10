@@ -19,6 +19,9 @@ const activeIndex = ref();
 const currentComponent = shallowRef();
 const currentProps = ref();
 //const currntComponentKey = ref();
+watch(activeIndex, (newValue) => {
+    console.log(newValue);
+});
 
 watch(
     market_id,
@@ -27,6 +30,8 @@ watch(
             const marketMenu = await HttpService.get('/api/getMarketMenu', toast, { market_id: newValue });
             const foundItem = marketMenu.find((item) => item.default === 1);
             activeIndex.value = marketMenu.findIndex((item) => item.default === 1);
+            console.log(newValue);
+            console.log(activeIndex.value);
             watchMarketMenu(marketMenu);
             currentComponent.value = MainBf;
             currentProps.value = { market_id: newValue, selection_id: foundItem.selection_id };
@@ -42,7 +47,7 @@ watch(
 function watchMarketMenu(marketMenu){
     const tmepList = [];
     marketMenu.map((element, index) => {
-        console.log(element);
+        //console.log(element);
         let param;
         let componentName;
         switch (element.type) {
@@ -73,7 +78,7 @@ function watchMarketMenu(marketMenu){
         });
     });
     menuItems.value = tmepList;
-    console.log(menuItems.value);
+   // console.log(menuItems.value);
 }
 
 onMounted(() => {
@@ -82,7 +87,7 @@ onMounted(() => {
 </script>
 <template>
     <div>
-        <TabMenu v-model="activeIndex" :model="menuItems"></TabMenu>
+        <TabMenu v-model:activeIndex="activeIndex" :model="menuItems"></TabMenu>
         <component :is="currentComponent" v-bind="currentProps"></component>
     </div>
 </template>

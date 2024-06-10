@@ -152,7 +152,7 @@ const doOpenTab = (marketId) => {
                         <div>
                             <div class="flex align-items-center overflow-hidden white-space-nowrap text-overflow-ellipsis side_bar_compition">
                                 <div class="border-double pl-1 pr-1">{{ match.compition_name }}</div> 
-                                <div class="ml-1 text-overflow-ellipsis">{{ match.host_name }}VS{{ match.guest_name }}这是测试数据</div>
+                                <div class="ml-1 sider_bar_team_name">{{ match.host_name }}VS{{ match.guest_name }}这是测试数据</div>
                             </div>
                         </div>
                         <div>
@@ -182,5 +182,12 @@ const doOpenTab = (marketId) => {
 .side_bar_op_button {
     padding: 4px;
     margin-right: 5px;
+}
+.sider_bar_team_name {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>

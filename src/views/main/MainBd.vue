@@ -26,17 +26,19 @@ onMounted(() => {
 
 onMounted(async () => {
     const loadData = await initData();
+    showOther.value = loadData.show_other;
     initChat(loadData.main.info, loadData.main.data, myChart1);
-    if (loadData.showOther) {
+    if (loadData.show_other) {
         initChat(loadData.other[0].info, loadData.other[0].data, myChart2);
         initChat(loadData.other[1].info, loadData.other[1].data, myChart3);
     }
 });
 async function refreshChat() {
     const loadData = await initData();
+    showOther.value = loadData.show_other;
     initChat(loadData.main.info, loadData.main.data, myChart1);
     myChart1.resize();
-    if (loadData.showOther) {
+    if (loadData.show_other) {
         initChat(loadData.other[0].info, loadData.other[0].data, myChart2);
         initChat(loadData.other[1].info, loadData.other[1].data, myChart3);
         myChart2.resize();
@@ -140,13 +142,13 @@ function initChat(info, myData, myChart) {
 </script>
 
 <template>
-    <div class="flex flex-row">
+    <div class="flex flex-row justify-content-center">
         <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
     </div>
     <div class="flex flex-column">
         <div ref="chat1" class="flex m-2 odds_chat"></div>
-        <div v-if="showOther" ref="chat2" class="flex m-2 odds_chat"></div>
-        <div v-if="showOther" ref="chat3" class="flex m-2 odds_chat"></div>
+        <div v-show="showOther" ref="chat2" class="flex m-2 bd_chat"></div>
+        <div v-show="showOther" ref="chat3" class="flex m-2 bd_chat"></div>
     </div>
 </template>
 

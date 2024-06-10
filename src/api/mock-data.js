@@ -10,6 +10,7 @@ export default [
                     user_info: {
                         'user_id|1-100': 1,
                         group_id: 1,
+                        user_name: 'mason123'
                     },
                     token: '@guid',
                     config: [

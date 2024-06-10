@@ -107,7 +107,7 @@ function initChat(info, myData, myChart) {
 </script>
 
 <template>
-    <div class="flex flex-row">
+    <div class="flex flex-row justify-content-center">
         <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
     </div>
     <div class="flex flex-column">
