@@ -5,17 +5,20 @@ import SessionStorageService from './SessionStorageService';
 class HttpService {
     constructor() {
         // 初始化 URL 前缀属性
-        this.urlPrefix = '';
+        this.urlPrefix = 'http://39.96.160.211';
     }
     async request(url, toast, options) {
         try {
             const storage = new SessionStorageService();
             const token = storage.getToken();
+            console.log(storage.getConfig());
+            const level  = storage.getConfig() !== null ? storage.getCurrentMenuItem().id : null;
             // 添加验证信息到请求头
             const headers = {
                 ...options.headers,
                 // 添加验证信息
-                Authorization: token
+                Authorization: token,
+                Level: level
             };
             options.headers = headers;
 
@@ -34,7 +37,7 @@ class HttpService {
                 router.push('/nopermission');
                 throw new Error('no permission');
             } else if (data.ret !== 200) {
-                throw new Error(data.message);
+                throw new Error(data.msg);
             }
             return data.data;
         } catch (error) {

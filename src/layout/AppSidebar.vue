@@ -24,7 +24,7 @@ const maxDate = computed(() => {
     return isDateString(currentMenu.value.end_date) ? moment(currentMenu.value.end_date).toDate() : null;
 });
 const initDate = computed(() => {
-    return isDateString(currentMenu.value.end_date) ? moment().format('YYYY-MM-DD') : moment(currentMenu.value.start_date).format('YYYY-MM-DD');
+    return isDateString(currentMenu.value.end_date) ? moment(currentMenu.value.start_date).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
 });
 
 const date = ref(initDate.value);
@@ -34,7 +34,8 @@ watch(
     date,
     async (newValue) => {
         try {
-            eventDataRaw.value = await HttpService.get('/api/getEventByDate', toast, { date: newValue });
+            console.log(newValue);
+            eventDataRaw.value = await HttpService.get('/api/getEventByDate', toast, { date: moment(newValue).format('YYYY-MM-DD') });
             showFilterButton.value = true;
             selectedNames.value = (() => {
                 const names = eventDataRaw.value.map((compition) => compition.compition_name);
