@@ -6,6 +6,7 @@ import { useMenuTab } from './global_state/selection_tab';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
 import router from '@/router';
+import _ from 'lodash';
 
 const toast = useToast();
 const eventDataRaw = ref([]);
@@ -34,8 +35,12 @@ watch(
     date,
     async (newValue) => {
         try {
-            console.log(newValue);
-            eventDataRaw.value = await HttpService.get('/api/getEventByDate', toast, { date: moment(newValue).format('YYYY-MM-DD') });
+            const requestData = await HttpService.get('/api/getEventByDate', toast, { date: moment(newValue).format('YYYY-MM-DD') });
+            if (_.isEmpty(requestData)) {
+                eventDataRaw.value = [];
+            } else {
+                eventDataRaw.value = requestData;
+            }
             showFilterButton.value = true;
             selectedNames.value = (() => {
                 const names = eventDataRaw.value.map((compition) => compition.compition_name);
@@ -146,18 +151,17 @@ const doOpenTab = (marketId) => {
         </div>
     </Dialog>
     <div v-for="match in filteredCompition" :key="match.market_id" class="match-card">
-        <Card pt:body:class="pl-0 pr-0">
+        <Card pt:body:class="pl-0 pr-0 pt-2 pb-2">
             <template #content>
                 <div class="flex flex-row justify-content-between align-items-center">
-                    <div class="flex flex-column row-gap-1" >
-                        <div>
-                            <div class="flex align-items-center overflow-hidden white-space-nowrap text-overflow-ellipsis side_bar_compition">
-                                <div class="border-double pl-1 pr-1">{{ match.compition_name }}</div> 
-                                <div class="ml-1 sider_bar_team_name">{{ match.host_name }}VS{{ match.guest_name }}这是测试数据</div>
+                    <div class="border-double pl-1 pr-1 compition-name">{{ match.compition_name }}</div> 
+                    <div class="flex flex-column row-gap-1">
+                        <div class="flex flex-row">
+                            <div class="flex flex-column align-items-center overflow-hidden white-space-nowrap text-overflow-ellipsis side_bar_compition">
+                                <div class="ml-1 sider_bar_team_name">{{ moment(match.compition_time).format('YYYY.MM.DD HH:mm') }}</div>
+                                <div class="ml-1 sider_bar_team_name">{{ match.host_name }}</div>
+                                <div class="ml-1 sider_bar_team_name">{{ match.guest_name }}</div>
                             </div>
-                        </div>
-                        <div>
-                            <span>开赛时间: {{ match.compition_time }}</span>
                         </div>
                     </div>
                     <div>
@@ -178,7 +182,7 @@ const doOpenTab = (marketId) => {
     width: 180px;
 }
 .side_bar_compition {
-    width: 190px;
+    width: 140px;
 }
 .side_bar_op_button {
     padding: 4px;
@@ -189,6 +193,12 @@ const doOpenTab = (marketId) => {
     height: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.compition-name {
+    max-width: 55px;
+    height: 100%;
+    overflow: hidden;
     white-space: nowrap;
 }
 </style>
