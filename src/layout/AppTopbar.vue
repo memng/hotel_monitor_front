@@ -209,8 +209,8 @@ const toggleUserinfo = (event) => {
                     <a class="p-menuitem-link topbar_tab_link" >
                         <span class="flex flex-row align-items-center p-menuitem-text topbar_tab_item_content">
                             <span class="flex flex-column">
-                                <span class="p-1 topbar_tab_word">{{ item.host_name }} sdfsfsdfgdfghdfhfdhdf</span>
-                                <span class="p-1 topbar_tab_word" >{{ item.guest_name }}</span>
+                                <span class="p-1 topbar_tab_word">{{ item.host_name }} </span>
+                                <span class="p-1 topbar_tab_word">{{ item.guest_name }}</span>
                             </span>
                             <span>
                                 <span class="pi pi-times p-2" @click.stop="doCloseTab(item.market_id)" />

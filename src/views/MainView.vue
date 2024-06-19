@@ -30,11 +30,18 @@ watch(
             const marketMenu = await HttpService.get('/api/getMarketMenu', toast, { market_id: newValue });
             const foundItem = marketMenu.find((item) => item.default === 1);
             activeIndex.value = marketMenu.findIndex((item) => item.default === 1);
-            console.log(newValue);
-            console.log(activeIndex.value);
+            //console.log(newValue);
+            //console.log(activeIndex.value);
             watchMarketMenu(marketMenu);
-            currentComponent.value = MainBf;
-            currentProps.value = { market_id: newValue, selection_id: foundItem.selection_id };
+            if (foundItem.type === 1) {
+                currentComponent.value = MainBf;
+                currentProps.value = { market_id: newValue, selection_id: foundItem.selection_id };
+            } else if (foundItem.type === 2) {
+                currentComponent.value = MainOdds;
+                currentProps.value = { sid: foundItem.sid };
+            } else {
+                throw new Error('invalid marketmenu type');
+            }
         } catch (error) {
             console.log('load getMarketMenu' + error.message);
         }
