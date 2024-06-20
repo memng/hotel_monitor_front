@@ -98,6 +98,8 @@ function switchCurrentMenuItem(itemId, rangeConfig) {
     if (foundItem.allow_group_id.includes(groupId)) {
         sssObj.setCurrentMenuItem(foundItem);
         currentMenu.value = foundItem;
+        tabs.value = [];
+        selectedTabId.value = 0;
     } else {
         toast.add({
             severity: 'error',
