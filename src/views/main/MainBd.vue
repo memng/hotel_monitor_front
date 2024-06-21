@@ -14,6 +14,7 @@ const chat1 = ref();
 const chat2 = ref();
 const chat3 = ref();
 const showOther = ref(false);
+const loading = ref(false);
 let myChart1;
 let myChart2;
 let myChart3;
@@ -47,7 +48,15 @@ async function refreshChat() {
 }
 
 async function initData() {
-    return await HttpService.get('/api/getBd', toast, { sid: props.sid });
+    loading.value = true;
+    try {
+        return await HttpService.get('/api/getBd', toast, { sid: props.sid });
+    } catch (error) {
+        console.error('errer fetch raw data' + error.message);
+    } finally {
+        loading.value = false;
+    }
+   
 }
 
 function initChat(info, myData, myChart) {
@@ -145,7 +154,12 @@ function initChat(info, myData, myChart) {
     <div class="flex flex-row justify-content-center">
         <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
     </div>
-    <div class="flex flex-column">
+    <div v-if="loading" class="bd_loading">
+        <div class="spinner_container">
+            <ProgressSpinner />
+        </div>
+    </div>
+    <div v-show="!loading" class="flex flex-column">
         <div ref="chat1" class="flex m-2 odds_chat"></div>
         <div v-show="showOther" ref="chat2" class="flex m-2 bd_chat"></div>
         <div v-show="showOther" ref="chat3" class="flex m-2 bd_chat"></div>
@@ -156,5 +170,19 @@ function initChat(info, myData, myChart) {
 .bd_chat {
     width: 100%;
     height: 400px;
+}
+.bd_loading {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.spinner_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 </style>

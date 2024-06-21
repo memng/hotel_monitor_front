@@ -22,6 +22,7 @@ const datetime24h = ref();
 const statData = ref([]);
 const selectionName = ref();
 const amountItem = ref();
+const loading = ref(false);
 let chartContainer;
 let myChart;
 const configMap = {
@@ -68,14 +69,24 @@ async function initAmountStat() {
     selectionName.value = result.selection_name;
 }
 async function initData() {
-    return await HttpService.get('/api/getRawData', toast, { market_id: props.market_id, selection_id: props.selection_id });
+    loading.value = true;
+    try {
+        return await HttpService.get('/api/getRawData', toast, { market_id: props.market_id, selection_id: props.selection_id });
+    } catch (error) {
+        console.error('errer fetch raw data' + error.message);
+    } finally {
+        loading.value = false;
+    }
 }
 
 async function refreshChat() {
     const loadData = await initData();
-    initChat(loadData);
+    if (myChart) {
+        const option = updataOption(loadData);
+        myChart.setOption(option);
+        myChart.resize();
+    }
     initAmountStat();
-    myChart.resize();
 }
 
 async function dealSelectDate(){
@@ -284,7 +295,14 @@ function calculateDiff(a1, a2) {
         <span class="p-2 mr-6 vertical-align-middle">{{ selectionName }}</span>
         <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
     </div>
-    <div tabindex="1" class="raw_graph_chat" ref="chats"></div>
+    <div v-if="loading" class="raw_graph_loading">
+        <div class="spinner_container">
+            <ProgressSpinner />
+        </div>
+    </div>
+    <div v-show="!loading">
+        <div tabindex="1" class="raw_graph_chat" ref="chats"></div>
+    </div>
     <!--整体统计-->
     <div>
         <DataTable v-if="amountItem !== undefined" :value="amountItem" showGridlines tableStyle="min-width: 50rem">
@@ -337,5 +355,19 @@ function calculateDiff(a1, a2) {
 }
 .raw_graph_time_button {
     width: 400px;
+}
+.raw_graph_loading {
+    width: 100%;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.spinner_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 </style>

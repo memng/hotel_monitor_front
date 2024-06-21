@@ -8,6 +8,7 @@ const chats = ref();
 const toast = useToast();
 const growthTable = ref();
 const selectionName = ref();
+const loading = ref(false);
 let chartContainer;
 let myChart;
 
@@ -37,9 +38,12 @@ onMounted(async () => {
 
 async function refreshChat() {
     const loadData = await initData();
-    initChat(loadData);
+    if (myChart) {
+        const option = updateOption(loadData);
+        myChart.setOption(option);
+        myChart.resize();
+    }
     initGrowthTable();
-    myChart.resize();
 }
 
 async function initGrowthTable() {
@@ -49,14 +53,17 @@ async function initGrowthTable() {
 }
 
 async function initData() {
-    return await HttpService.get('/api/getKLine', toast, { market_id: props.market_id, selection_id: props.selection_id });
+    loading.value = true;
+    try {
+        return await HttpService.get('/api/getKLine', toast, { market_id: props.market_id, selection_id: props.selection_id });
+    } catch (error) {
+        console.error('errer fetch raw data' + error.message);
+    } finally {
+        loading.value = false;
+    }
 }
 
-function initChat(rawData){
-    if (!chartContainer || !myChart) {
-        return;
-    }
-    let selected = false;
+function updateOption(rawData){
     var option;
     // 模拟数据
     var xAxisData = [];
@@ -330,9 +337,17 @@ function initChat(rawData){
             }
         ]
     };
+    return option;
+}
 
-    // 使用配置项显示图表
+function initChat(rawData){
+    if (!chartContainer || !myChart) {
+        return;
+    }
+    const option = updateOption(rawData);
     myChart.setOption(option);
+    let selected = false;
+    // 使用配置项显示图表
     chartContainer.addEventListener('mouseover', () => {
         // 创建一个新的点击事件
         let clickEvent = new MouseEvent('click', {
@@ -393,10 +408,17 @@ function initChat(rawData){
         <span class="p-2 mr-6 vertical-align-middle">{{ selectionName }}</span>
         <Button class="ml-6" icon="pi pi-refresh" label="刷新" @click="refreshChat"></Button>
     </div>
-    <div tabindex="1" class="k_line_chat" ref="chats"></div>
+    <div v-if="loading" class="k_line_loading">
+        <div class="spinner_container">
+            <ProgressSpinner />
+        </div>
+    </div>
+    <div v-show="!loading">
+        <div tabindex="1" class="k_line_chat" ref="chats"></div>
+    </div>
     <!--增长统计-->
     <div>
-        <DataTable v-if="growthTable !== undefined" :value="growthTable" showGridlines tableStyle="min-width: 50rem">
+        <DataTable v-if="growthTable !== undefined" :value="growthTable" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]" showGridlines tableStyle="min-width: 50rem">
             <Column field="begin_time" header="时间"></Column>
             <Column header="方向">
                 <template #body="slotProps">
@@ -421,5 +443,19 @@ function initChat(rawData){
     width: 100%;
     height: 600px;
     outline-color: var(--primary-color);
+}
+.k_line_loading {
+    width: 100%;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.spinner_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 </style>
