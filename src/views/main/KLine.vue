@@ -3,12 +3,14 @@ import * as echarts from 'echarts';
 import { ref, onMounted, watch } from 'vue';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
+import _ from 'lodash';
 
 const chats = ref();
 const toast = useToast();
 const growthTable = ref();
 const selectionName = ref();
 const loading = ref(false);
+const showNoDataMessage = ref(false);
 let chartContainer;
 let myChart;
 
@@ -55,7 +57,11 @@ async function initGrowthTable() {
 async function initData() {
     loading.value = true;
     try {
-        return await HttpService.get('/api/getKLine', toast, { market_id: props.market_id, selection_id: props.selection_id });
+        const fetchRersultData = await HttpService.get('/api/getKLine', toast, { market_id: props.market_id, selection_id: props.selection_id });
+        if (_.isEmpty(fetchRersultData)) {
+            showNoDataMessage.value = true;
+        }
+        return fetchRersultData;
     } catch (error) {
         console.error('errer fetch raw data' + error.message);
     } finally {
@@ -414,6 +420,7 @@ function initChat(rawData){
         </div>
     </div>
     <div v-show="!loading">
+        <div v-if="showNoDataMessage">暂时没有本场k线数据</div>
         <div tabindex="1" class="k_line_chat" ref="chats"></div>
     </div>
     <!--增长统计-->

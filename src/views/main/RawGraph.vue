@@ -4,6 +4,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
 import moment from 'moment';
+import _ from 'lodash';
 
 const props = defineProps({
     market_id: {
@@ -23,6 +24,7 @@ const statData = ref([]);
 const selectionName = ref();
 const amountItem = ref();
 const loading = ref(false);
+const showNoDataMessage = ref(false);
 let chartContainer;
 let myChart;
 const configMap = {
@@ -39,15 +41,15 @@ const configMap = {
 
 }
 const tableData = computed(() => {
-    console.log(statData.value);
+    //console.log(statData.value);
     const afterDeal = Object.keys(statData.value).map((key) => {
         return {
             key: configMap[key],
             ...statData.value[key]
         };
     });
-    console.log(afterDeal);
-    console.log(Object.keys(afterDeal));
+    //console.log(afterDeal);
+    //console.log(Object.keys(afterDeal));
     return afterDeal;
 })
 
@@ -71,7 +73,11 @@ async function initAmountStat() {
 async function initData() {
     loading.value = true;
     try {
-        return await HttpService.get('/api/getRawData', toast, { market_id: props.market_id, selection_id: props.selection_id });
+        const fetchResultData = await HttpService.get('/api/getRawData', toast, { market_id: props.market_id, selection_id: props.selection_id });
+        if (_.isEmpty(fetchResultData)) {
+            showNoDataMessage.value = true;
+        }
+        return fetchResultData;
     } catch (error) {
         console.error('errer fetch raw data' + error.message);
     } finally {
@@ -301,6 +307,7 @@ function calculateDiff(a1, a2) {
         </div>
     </div>
     <div v-show="!loading">
+        <div v-if="showNoDataMessage">暂时没有本场原图数据</div>
         <div tabindex="1" class="raw_graph_chat" ref="chats"></div>
     </div>
     <!--整体统计-->

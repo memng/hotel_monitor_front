@@ -48,6 +48,24 @@ const router = createRouter({
                 }
             ]
         },
+        // {
+        //     path: '/index/',
+        //     component: AppLayout,
+        //     children: [
+        //         {
+        //             path: 'main/:market_id',
+        //             name: 'mainview',
+        //             component: () => import('@/views/MainView.vue'),
+        //             props: (route) => {
+        //                 // 使用正则表达式匹配参数
+        //                 const marketId = route.params.market_id.replace(/_/g, '.');
+        //                 return {
+        //                     market_id: marketId
+        //                 };
+        //             }
+        //         },
+        //     ]
+        // },
         {
             path: '/login',
             name: 'login',
@@ -98,6 +116,11 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     if (to.name === 'nopermission') {
         next();
+        return;
+    }
+    if (to.path.startsWith('/index/')) {
+        next();
+        return;
     }
     // 检查用户是否登录
     const isLoggedIn = checkIfUserIsLoggedIn(); // 这个函数需要根据你的实际情况来实现

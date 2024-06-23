@@ -5,6 +5,8 @@ import { onMounted, toRefs, watch, ref, shallowRef } from 'vue';
 import MainBf from './main/MainBf.vue';
 import MainOdds from './main/MainOdds.vue';
 import MainBd from './main/MainBd.vue';
+import MainNoData from './main/MainNoData.vue';
+import _ from 'lodash';
 
 const toast = useToast();
 const props = defineProps({
@@ -19,15 +21,21 @@ const activeIndex = ref();
 const currentComponent = shallowRef();
 const currentProps = ref();
 //const currntComponentKey = ref();
-watch(activeIndex, (newValue) => {
-    console.log(newValue);
-});
+// watch(activeIndex, (newValue) => {
+//     console.log(newValue);
+// });
 
 watch(
     market_id,
     async (newValue) => {
         try {
             const marketMenu = await HttpService.get('/api/getMarketMenu', toast, { market_id: newValue });
+            if (_.isEmpty(marketMenu)) {
+                currentComponent.value = MainNoData;
+                currentProps.value = { show_message: '暂时没有本场比赛数据' };
+                menuItems.value = [];
+                return;
+            }
             const foundItem = marketMenu.find((item) => item.default === 1);
             activeIndex.value = marketMenu.findIndex((item) => item.default === 1);
             //console.log(newValue);
