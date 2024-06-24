@@ -8,6 +8,7 @@ import httpService from '@/service/HttpService';
 import SessionStorageService from '@/service/SessionStorageService';
 
 const { layoutConfig } = useLayout();
+
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
@@ -38,7 +39,6 @@ async function doLoginIn() {
     <Toast />
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
-            <img :src="logoUrl" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0" />
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
                     <div class="text-center mb-5">
@@ -46,8 +46,8 @@ async function doLoginIn() {
                     </div>
 
                     <div>
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">用户名/手机号</label>
-                        <InputText id="email1" type="text" placeholder="请输入用户名或手机号" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="email" />
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">手机号</label>
+                        <InputText id="email1" type="text" placeholder="请输入手机号" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="email" />
 
                         <label for="password1" class="block text-900 font-medium text-xl mb-2">密码</label>
                         <Password id="password1" v-model="password" placeholder="密码" :toggleMask="true" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>

@@ -32,7 +32,7 @@ class HttpService {
             if (data.ret === 401) {
                 // 跳转到无权限页面
                 router.push('/login');
-                throw new Error('token expire');
+                throw new Error(data.msg);
             } else if (data.ret === 403) {
                 router.push('/nopermission');
                 throw new Error('no permission');
