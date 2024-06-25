@@ -10,7 +10,7 @@ class HttpService {
     async request(url, toast, options) {
         try {
             const storage = new SessionStorageService();
-            const token = storage.getRfToken + ',' + storage.getToken();
+            const token = storage.getRfToken() + ',' + storage.getToken();
             const level = storage.getConfig() !== null ? storage.getCurrentMenuItem().id : null;
             // 添加验证信息到请求头
             const headers = {
@@ -68,7 +68,7 @@ class HttpService {
         });
         options.headers = {
             ...options.headers,
-            'Content-Type': 'multipart/form-data' // 设置正确的 Content-Type
+            //'Content-Type': 'multipart/form-data' // 设置正确的 Content-Type
         };
         options.body = formData;
         return await this.request(url, toast, options); // 使用 await 等待异步请求完成

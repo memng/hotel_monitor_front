@@ -83,8 +83,8 @@ const router = createRouter({
                         try {
                             const storageObj = new SessionStorageService();
                             const option = {
-                                headers : {
-                                    Authorization: storageObj.getRfToken() + ',' + storageObj.getToken
+                                headers: {
+                                    Authorization: storageObj.getRfToken() + ',' + storageObj.getToken()
                                 }
                             };
                             const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
@@ -95,7 +95,7 @@ const router = createRouter({
                                 next();
                             }
                         } catch (error) {
-                            console.error(error.message);
+                            console.log(error);
                             next();
                         }
                     },

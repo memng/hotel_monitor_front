@@ -5,11 +5,23 @@ class OpenHttpService {
     }
     async request(url, options) {
         const fullUrl = this.urlPrefix + url;
+        options.credentials = 'include';
         const response = await fetch(fullUrl, options);
         if (!response.ok) {
             throw new Error('网络错误');
         }
-        const data = await response.json();
+        const contentType = response.headers.get('Content-Type');
+        let data = null;
+        if (contentType.includes('application/json')) {
+            // 处理JSON响应
+            data = await response.json();
+        } else if (contentType.includes('image')) {
+            // 处理图片响应
+            const blob = await response.blob();
+            data = URL.createObjectURL(blob);
+        } else {
+            console.error('Unexpected content type:', contentType);
+        }
         return data;
     }
 
@@ -22,6 +34,7 @@ class OpenHttpService {
     }
 
     async post(url, data = {}, options = {}) {
+        //console.log(data);
         options.method = 'POST';
         const formData = new FormData();
         // 将 data 中的数据添加到 FormData 对象中
@@ -30,7 +43,7 @@ class OpenHttpService {
         });
         options.headers = {
             ...options.headers,
-            'Content-Type': 'multipart/form-data' // 设置正确的 Content-Type
+            //'Content-Type': 'multipart/form-data' // 设置正确的 Content-Type
         };
         options.body = formData;
         return await this.request(url, options); // 使用 await 等待异步请求完成
