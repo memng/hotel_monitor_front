@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
-//import SessionStorageService from '../service/SessionStorageService';
+import SessionStorageService from '../service/SessionStorageService';
+import OpenHttpService from '@/service/OpenHttpService';
 import IndexLayout from '@/views/index/IndexLayout.vue';
 
 const router = createRouter({
@@ -64,21 +65,40 @@ const router = createRouter({
                     component: () => import('@/views/index/IndexPrice.vue'),
                 },
                 {
+                    path: 'reg',
+                    name: 'index_reg',
+                    component: () => import('@/views/pages/auth/Reg.vue'),
+                },
+                {
+                    path: 'get_password',
+                    name: 'index_get_password',
+                    component: () => import('@/view/pages/auth/GetPassword.vue'),
+                },
+                {
                     path: 'login',
                     name: 'login',
                     component: () => import('@/views/pages/auth/Login.vue'),
-                    // 在异步组件加载后执行
-                    // beforeEnter: (to, from, next) => {
-                    //     // 检查用户是否登录
-                    //     const isLoggedIn = checkIfUserIsLoggedIn(); // 这个函数需要根据你的实际情况来实现
-                    //     if (isLoggedIn) {
-                    //         // 用户已登录，跳转到首页
-                    //         next('/');
-                    //     } else {
-                    //         // 用户未登录，继续显示登录页面
-                    //         next();
-                    //     }
-                    // },
+                    beforeEnter: async (to, from, next) => {
+                        //首先执行自动登录
+                        try {
+                            const storageObj = new SessionStorageService();
+                            const option = {
+                                headers : {
+                                    Authorization: storageObj.getRfToken() + ',' + storageObj.getToken
+                                }
+                            };
+                            const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
+                            if (refreshResult.ret === 200) {
+                                storageObj.setToken(refreshResult.data.access_token);
+                                next('/');
+                            } else {
+                                next();
+                            }
+                        } catch (error) {
+                            console.error(error.message);
+                            next();
+                        }
+                    },
                 },
             ]
         },

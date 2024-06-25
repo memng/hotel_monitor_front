@@ -3,6 +3,7 @@ export default class SessionStorageService {
         this.userInfoKey = 'user_info';
         this.configKey = 'config';
         this.tokenKey = 'token';
+        this.refreshTokenKey = 'rf_token';
         this.currentMenuItem = 'current_menu_item';
     }
 
@@ -74,6 +75,16 @@ export default class SessionStorageService {
     // 获取 token
     getToken() {
         return localStorage.getItem(this.tokenKey);
+    }
+
+    // 保存 token
+    setRfToken(token) {
+        localStorage.setItem(this.refreshTokenKey, token);
+    }
+
+    // 获取 token
+    getRfToken() {
+        return localStorage.getItem(this.refreshTokenKey);
     }
 
     // 清除 token

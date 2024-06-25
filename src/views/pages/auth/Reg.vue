@@ -1,14 +1,21 @@
 <script setup>
-import { ref } from 'vue';
+import { useLayout } from '@/layout/composables/layout';
+import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import httpService from '@/service/HttpService';
 import SessionStorageService from '@/service/SessionStorageService';
 
+const { layoutConfig } = useLayout();
+
 const email = ref('');
 const password = ref('');
+const checked = ref(false);
 
+const logoUrl = computed(() => {
+    return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+});
 const sessionStorageObj = new SessionStorageService();
 const router = useRouter();
 const toast = useToast();
@@ -47,9 +54,9 @@ async function doLoginIn() {
 
                         <div class="flex align-items-center justify-content-between mb-5 gap-5">
                             <div class="flex align-items-center">
-                                <a class="font-medium no-underline ml-2 text-right cursor-pointer" href="/index/reg" style="color: var(--primary-color)">新用户注册</a>
+                                <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">新用户注册</a>
                             </div>
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer" href="/index/get_password" style="color: var(--primary-color)">忘记密码？</a>
+                            <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">忘记密码？</a>
                         </div>
                         <Button @click="doLoginIn()" label="登录" class="w-full p-3 text-xl"></Button>
                     </div>

@@ -10,9 +10,8 @@ class HttpService {
     async request(url, toast, options) {
         try {
             const storage = new SessionStorageService();
-            const token = storage.getToken();
-            console.log(storage.getConfig());
-            const level  = storage.getConfig() !== null ? storage.getCurrentMenuItem().id : null;
+            const token = storage.getRfToken + ',' + storage.getToken();
+            const level = storage.getConfig() !== null ? storage.getCurrentMenuItem().id : null;
             // 添加验证信息到请求头
             const headers = {
                 ...options.headers,
@@ -26,7 +25,7 @@ class HttpService {
             const fullUrl = this.urlPrefix + url;
             const response = await fetch(fullUrl, options);
             if (!response.ok) {
-                throw new Error('服务器错误');
+                throw new Error('网络错误');
             }
             const data = await response.json();
             if (data.ret === 401) {
