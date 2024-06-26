@@ -30,10 +30,11 @@ class HttpService {
             const data = await response.json();
             if (data.ret === 401) {
                 // 跳转到无权限页面
-                router.push('/login');
+                router.push('/index/login');
                 throw new Error(data.msg);
             } else if (data.ret === 403) {
-                router.push('/nopermission');
+                router.push({ name: 'nopermission', params: { message: data.msg } });
+                console.log(data.msg);
                 throw new Error('no permission');
             } else if (data.ret !== 200) {
                 throw new Error(data.msg);

@@ -1,16 +1,17 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import AppConfig from '@/layout/AppConfig.vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import OpenHttpService from '@/service/OpenHttpService';
 import SessionStorageService from '@/service/SessionStorageService';
+import { useMessage } from '@/layout/global_state/message_show';
+const { message } = useMessage();
 
 const captchaUrl = ref('');
 const loginForm = ref({
     user_phone: '',
     user_pass: '',
-    verify_code:'',
+    verify_code: '',
 });
 
 const sessionStorageObj = new SessionStorageService();
@@ -20,7 +21,12 @@ const toast = useToast();
 const fetchCaptcha = async () => {
     try {
         const response = await OpenHttpService.get('/open/getCaptcha', { scene: 'login' });
-        captchaUrl.value = response;
+        if (response.ret === 200) {
+            captchaUrl.value = response.data.captcha;
+            sessionStorageObj.setSessionId(response.data.session_id);
+        } else {
+            console.error('获取验证码失败:', response.ret, response.msg);
+        }
     } catch (error) {
         console.error('获取验证码失败:', error);
     }
@@ -51,6 +57,17 @@ async function doLoginIn() {
 
 onMounted(() => {
     fetchCaptcha();
+    //console.log(message.value);
+    if (message.value !== undefined) {
+        // 错误处理逻辑
+        toast.add({
+            severity: 'info',
+            summary: '提醒',
+            detail: message.value, // 假设返回的数据中包含错误消息
+            life: 10000
+        });
+        message.value = undefined;
+    }
 });
 
 </script>
@@ -74,7 +91,7 @@ onMounted(() => {
                         <div class="captcha-container">
                             <label for="captcha" class="block text-900 text-xl font-medium mb-2">验证码</label>
                             <div class="captcha-row">
-                                <InputText v-model="loginForm.verify_code" id="captcha" placeholder="输入验证码" />
+                                <InputText v-model="loginForm.verify_code" id="captcha" placeholder="输入右侧数字" />
                                 <img :src="captchaUrl" @click="fetchCaptcha" alt="点击刷新验证码" class="captcha-image">
                             </div>
                         </div>
@@ -91,7 +108,6 @@ onMounted(() => {
             </div>
         </div>
     </div>
-    <AppConfig simple />
 </template>
 
 <style scoped>

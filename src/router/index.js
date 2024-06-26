@@ -29,9 +29,10 @@ const router = createRouter({
                     component: () => import('@/views/MainViewEmpty.vue'),
                 },
                 {
-                    path: 'nopermission',
+                    path: 'nopermission/:message',
                     name: 'nopermission',
-                    component: () => import('@/views/pages/auth/Access.vue')
+                    component: () => import('@/views/pages/auth/Access.vue'),
+                    props: true
                 },
                 {
                     path: 'usercentre',
@@ -72,7 +73,7 @@ const router = createRouter({
                 {
                     path: 'get_password',
                     name: 'index_get_password',
-                    component: () => import('@/view/pages/auth/GetPassword.vue'),
+                    component: () => import('@/views/pages/auth/GetPassword.vue'),
                 },
                 {
                     path: 'login',

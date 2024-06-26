@@ -1,9 +1,15 @@
-<script setup></script>
+<script setup>
+defineProps({
+    message: {
+        type: String,
+        required: true
+    },
+});
+</script>
 
 <template>
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
-            <img src="/demo/images/access/logo-orange.svg" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0" />
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(247, 149, 48, 0.4) 10%, rgba(247, 149, 48, 0) 30%)">
                 <div class="w-full surface-card py-8 px-5 sm:px-8 flex flex-column align-items-center" style="border-radius: 53px">
                     <div class="grid flex flex-column align-items-center">
@@ -11,11 +17,11 @@
                             <i class="text-50 pi pi-fw pi-lock text-2xl"></i>
                         </div>
                         <h1 class="text-900 font-bold text-4xl lg:text-5xl mb-2">无访问权限</h1>
-                        <span class="text-600 mb-5">试用会员仅能在北京时间08-18点访问数据</span>
+                        <span class="text-600 mb-5">{{ message }}</span>
                         <img src="/demo/images/access/asset-access.svg" alt="Access denied" class="mb-5" width="80%" />
                         <div class="col-12 mt-5 text-center">
                             <i class="pi pi-fw pi-arrow-left text-blue-500 mr-2" style="vertical-align: center"></i>
-                            <router-link to="/" class="text-blue-500">Go to Dashboard</router-link>
+                            <router-link to="/" class="text-blue-500">返回</router-link>
                         </div>
                     </div>
                 </div>

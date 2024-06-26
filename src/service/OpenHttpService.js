@@ -1,3 +1,5 @@
+import SessionStorageService from "./SessionStorageService";
+
 class OpenHttpService {
     constructor() {
         // 初始化 URL 前缀属性
@@ -5,7 +7,14 @@ class OpenHttpService {
     }
     async request(url, options) {
         const fullUrl = this.urlPrefix + url;
-        options.credentials = 'include';
+        const sssObj = new SessionStorageService();
+        // 添加验证信息到请求头
+        const headers = {
+            ...options.headers,
+            // 添加验证信息
+            Session: sssObj.getSessionId(),
+        };
+        options.headers = headers;
         const response = await fetch(fullUrl, options);
         if (!response.ok) {
             throw new Error('网络错误');
