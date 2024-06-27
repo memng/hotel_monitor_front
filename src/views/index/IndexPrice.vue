@@ -8,7 +8,7 @@
         <div class="grid justify-content-between mt-8 md:mt-0">
             <div class="col-12 lg:col-4 p-0 md:p-3">
                 <div class="p-3 flex flex-column border-200 pricing-card cursor-pointer border-2 hover:border-primary transition-duration-300 transition-all" style="border-radius: 10px">
-                    <h3 class="text-900 text-center my-5">免费</h3>
+                    <h3 class="text-900 text-center my-5">免费会员</h3>
                     <img src="/demo/images/landing/free.svg" class="w-10 h-10 mx-auto" alt="free" />
                     <div class="my-5 text-center">
                         <span class="text-5xl font-bold mr-2 text-900">￥0</span>
@@ -90,6 +90,10 @@
                         <li class="py-2">
                             <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
                             <span class="text-xl line-height-3">网站系统使用技术支持和答疑</span>
+                        </li>
+                        <li class="py-2">
+                            <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
+                            <span class="text-xl line-height-3">新增联赛需求申请</span>
                         </li>
                     </ul>
                 </div>

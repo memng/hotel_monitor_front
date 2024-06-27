@@ -66,6 +66,16 @@ const router = createRouter({
                     component: () => import('@/views/index/IndexPrice.vue'),
                 },
                 {
+                    path: 'faq',
+                    name: 'index_faq',
+                    component: () => import('@/views/index/IndexFaq.vue'),
+                },
+                {
+                    path: 'contact',
+                    name: 'index_contact',
+                    component: () => import('@/views/index/IndexContact.vue'),
+                },
+                {
                     path: 'reg',
                     name: 'index_reg',
                     component: () => import('@/views/pages/auth/Reg.vue'),
