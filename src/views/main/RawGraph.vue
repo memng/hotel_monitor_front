@@ -190,7 +190,20 @@ function updataOption(data){
                 var price = priceData[dataIndex];
                 var volume = volumeData[dataIndex];
                 var datetime = rawTimeData[dataIndex];
-                return `Price: ${price}<br>Volume: ${volume}<br>Datetime: ${datetime}`;
+                var propertyR = propertyData[dataIndex];
+                var propertyShow = '无';
+                if (propertyR === 1) {
+                    propertyShow = '买';
+                } else if (propertyR === 2) {
+                    propertyShow = '卖';
+                } else if (propertyR === 3) {
+                    propertyShow = '中';
+                } else if (propertyR === 4) {
+                    propertyShow = '买+'; // 浅红色
+                } else if (propertyR === 5) {
+                    propertyShow = '卖+'; // 浅绿色
+                }
+                return `价位: ${price}<br>量: ${volume}<br>属性: ${propertyShow}<br>时间: ${datetime}`;
             }
         },
         xAxis: {
