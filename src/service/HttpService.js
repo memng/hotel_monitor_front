@@ -7,7 +7,7 @@ const { message } = useAuthMessage();
 class HttpService {
     constructor() {
         // 初始化 URL 前缀属性
-        this.urlPrefix = 'http://39.96.160.211';
+        this.urlPrefix = 'https://api.bf-data.cn';
     }
     async request(url, toast, options) {
         try {
