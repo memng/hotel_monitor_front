@@ -1,6 +1,8 @@
 // httpService.js
 import router from '../router';
 import SessionStorageService from './SessionStorageService';
+import { useAuthMessage } from '@/layout/global_state/auth_message_show';
+const { message } = useAuthMessage();
 
 class HttpService {
     constructor() {
@@ -33,8 +35,8 @@ class HttpService {
                 router.push('/index/login');
                 throw new Error(data.msg);
             } else if (data.ret === 403) {
-                router.push({ name: 'nopermission', params: { message: data.msg } });
-                console.log(data.msg);
+                message.value = data.msg;
+                router.push({ name: 'nopermission' });
                 throw new Error('no permission');
             } else if (data.ret !== 200) {
                 throw new Error(data.msg);

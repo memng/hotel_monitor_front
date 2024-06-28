@@ -1,10 +1,7 @@
 <script setup>
-defineProps({
-    message: {
-        type: String,
-        required: true
-    },
-});
+import { useAuthMessage } from '@/layout/global_state/auth_message_show';
+const { message } = useAuthMessage();
+
 </script>
 
 <template>

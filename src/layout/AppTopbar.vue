@@ -8,9 +8,11 @@ import HttpService from '@/service/HttpService';
 import moment from 'moment';
 import { useRangMenu } from './global_state/topbar_menu';
 import { useMenuTab } from './global_state/selection_tab';
+import _ from 'lodash';
 const { layoutConfig, onMenuToggle } = useLayout();
 const { items, currentMenu } = useRangMenu();
 const { tabs, selectedTabId } = useMenuTab();
+
 
 const logoUrl = computed(() => {
     return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
@@ -35,19 +37,32 @@ const buttonLabel = computed(() => {
 
 onBeforeMount(() => {
     const rangeConfig = sssObj.getConfig();
-    setCurrentMenuItem(rangeConfig);
+    const currentMenuStore = sssObj.getCurrentMenuItem();
+    if (_.isEmpty(currentMenuStore)) {
+        setCurrentMenuItem(rangeConfig);
+    }
     watchRangeConfig(rangeConfig);
 });
 
 let intervalId;
 let intervalTime = 6 * 60 * 60 * 1000;
 
+const clearTabs = (event) => {
+    if (event.key === sssObj.currentMenuItem) {
+        tabs.value = [];
+        selectedTabId.value = 0;
+    }
+}
+
 onMounted(() => {
     intervalId = setInterval(refreshConfig, intervalTime);
+    //currentMenuItem变化时，清空tabs;
+    window.addEventListener('storage', clearTabs);
 });
 
 onUnmounted(() => {
     clearInterval(intervalId);
+    window.removeEventListener('storage', clearTabs);
 });
 
 async function refreshConfig(){
@@ -56,6 +71,7 @@ async function refreshConfig(){
     const storeConfig = sssObj.getConfig();
     if (JSON.stringify(config) !== JSON.stringify(storeConfig)) {
         sssObj.setConfig(config);
+        setCurrentMenuItem(config);
         watchRangeConfig(config);
     }
 }
@@ -98,8 +114,6 @@ function switchCurrentMenuItem(itemId, rangeConfig) {
     if (foundItem.allow_group_id.includes(groupId)) {
         sssObj.setCurrentMenuItem(foundItem);
         currentMenu.value = foundItem;
-        tabs.value = [];
-        selectedTabId.value = 0;
     } else {
         toast.add({
             severity: 'error',

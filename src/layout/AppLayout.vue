@@ -67,10 +67,10 @@ const checkScreenWidth = () => {
     isSupported.value = window.innerWidth > 991;
 };
 
-async function refreshToken()  {
+async function refreshToken() {
     const tokenHttp = await HttpService.post('/api/refreshToken', toast);
     const session = new SessionStorageService();
-    session.setToken(tokenHttp.token);
+    session.setToken(tokenHttp.access_token);
 }
 
 let intervalId;

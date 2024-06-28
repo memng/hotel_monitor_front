@@ -29,10 +29,9 @@ const router = createRouter({
                     component: () => import('@/views/MainViewEmpty.vue'),
                 },
                 {
-                    path: 'nopermission/:message',
+                    path: 'nopermission',
                     name: 'nopermission',
                     component: () => import('@/views/pages/auth/Access.vue'),
-                    props: true
                 },
                 {
                     path: 'usercentre',
