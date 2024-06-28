@@ -112,16 +112,6 @@ const router = createRouter({
                 },
             ]
         },
-        {
-            path: '/landing',
-            name: 'landing',
-            component: () => import('@/views/pages/Landing.vue')
-        },
-        {
-            path: '/pages/notfound',
-            name: 'notfound',
-            component: () => import('@/views/pages/NotFound.vue')
-        },
 
         {
             path: '/auth/login',
@@ -133,11 +123,6 @@ const router = createRouter({
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')
         },
-        {
-            path: '/auth/error',
-            name: 'error',
-            component: () => import('@/views/pages/auth/Error.vue')
-        }
     ]
 });
 
