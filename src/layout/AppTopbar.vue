@@ -40,6 +40,8 @@ onBeforeMount(() => {
     const currentMenuStore = sssObj.getCurrentMenuItem();
     if (_.isEmpty(currentMenuStore)) {
         setCurrentMenuItem(rangeConfig);
+    } else {
+        loadCurrentMenuItem(currentMenuStore);
     }
     watchRangeConfig(rangeConfig);
 });
@@ -79,7 +81,11 @@ async function refreshConfig(){
 function setCurrentMenuItem(rangeConfig){
     const defaultItem = rangeConfig.find((item) => item.default === 1);
     sssObj.setCurrentMenuItem(defaultItem);
-    currentMenu.value = defaultItem;
+    //currentMenu.value = defaultItem;
+    loadCurrentMenuItem(defaultItem);
+}
+function loadCurrentMenuItem(currentItem){
+    currentMenu.value = currentItem;
 }
 
 function watchRangeConfig(rangeConfig){

@@ -3,6 +3,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 import SessionStorageService from '../service/SessionStorageService';
 import OpenHttpService from '@/service/OpenHttpService';
 import IndexLayout from '@/views/index/IndexLayout.vue';
+import _ from 'lodash';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -10,6 +11,7 @@ const router = createRouter({
         {
             path: '/',
             component: AppLayout,
+            meta: { requiresAuth: true },
             children: [
                 {
                     path: 'main/:market_id',
@@ -21,32 +23,44 @@ const router = createRouter({
                         return {
                             market_id: marketId
                         };
-                    }
+                    },
+                    meta: { requiresAuth: true }
+                },
+                {
+                    path: 'maindash',
+                    name: 'maindash',
+                    component: () => import('@/views/MainDash.vue'),
+                    meta: { requiresAuth: true }
                 },
                 {
                     path: 'mainempty',
                     name: 'mainviewempty',
                     component: () => import('@/views/MainViewEmpty.vue'),
+                    meta: { requiresAuth: true }
                 },
                 {
                     path: 'nopermission',
                     name: 'nopermission',
                     component: () => import('@/views/pages/auth/Access.vue'),
+                    meta: { requiresAuth: true }
                 },
                 {
                     path: 'usercentre',
                     name: 'usercentre',
-                    component: () => import('@/views/user/UserCentre.vue')
+                    component: () => import('@/views/user/UserCentre.vue'),
+                    meta: { requiresAuth: true }
                 },
                 {
                     path: 'goodsintro',
                     name: 'goodsintro',
-                    component: () => import('@/views/user/GoodsIntro.vue')
+                    component: () => import('@/views/user/GoodsIntro.vue'),
+                    meta: { requiresAuth: true }
                 },
                 {
                     path: 'logout',
                     name: 'logout',
-                    component: () => import('@/views/user/Logout.vue')
+                    component: () => import('@/views/user/Logout.vue'),
+                    meta: { requiresAuth: true }
                 }
             ]
         },
@@ -88,27 +102,29 @@ const router = createRouter({
                     path: 'login',
                     name: 'login',
                     component: () => import('@/views/pages/auth/Login.vue'),
-                    beforeEnter: async (to, from, next) => {
-                        //首先执行自动登录
-                        try {
-                            const storageObj = new SessionStorageService();
-                            const option = {
-                                headers: {
-                                    Authorization: storageObj.getRfToken() + ',' + storageObj.getToken()
-                                }
-                            };
-                            const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
-                            if (refreshResult.ret === 200) {
-                                storageObj.setToken(refreshResult.data.access_token);
-                                next('/');
-                            } else {
-                                next();
-                            }
-                        } catch (error) {
-                            console.log(error);
-                            next();
-                        }
-                    },
+                    // beforeEnter: async (to, from, next) => {
+                    //     //首先执行自动登录
+                    //     try {
+                    //         const storageObj = new SessionStorageService();
+                    //         const option = {
+                    //             headers: {
+                    //                 Authorization: storageObj.getRfToken() + ',' + storageObj.getToken()
+                    //             }
+                    //         };
+                    //         const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
+                    //         if (refreshResult.ret === 200) {
+                    //             storageObj.setToken(refreshResult.data.access_token);
+                    //             next(to);
+                    //             return;
+                    //         } else {
+                    //             next();
+                    //             return;
+                    //         }
+                    //     } catch (error) {
+                    //         console.log(error);
+                    //         return next();
+                    //     }
+                    // },
                 },
             ]
         },
@@ -125,9 +141,62 @@ const router = createRouter({
         },
     ]
 });
+router.beforeEach(async (to, from, next) => {
+    const storageObj = new SessionStorageService();
+    const rfToken = storageObj.getRfToken();
 
-//导航守卫
-// router.beforeEach((to, from, next) => {
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+        // 需要权限的页面
+        if (_.isEmpty(rfToken)) {
+            return next({ name: 'login' });
+        }
+        try {
+            const option = {
+                headers: {
+                    Authorization: `${rfToken},${storageObj.getToken()}`
+                }
+            };
+            const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
+            if (refreshResult.ret === 200) {
+                storageObj.setToken(refreshResult.data.access_token);
+                return next();
+            } else {
+                return next({ name: 'login' });
+            }
+        } catch (error) {
+            console.log(error);
+            return next({ name: 'login' });
+        }
+    } else if (to.name === 'login') {
+        // 登录页面
+        if (!_.isEmpty(rfToken)) {
+            try {
+                const option = {
+                    headers: {
+                        Authorization: `${rfToken},${storageObj.getToken()}`
+                    }
+                };
+                const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
+                if (refreshResult.ret === 200) {
+                    storageObj.setToken(refreshResult.data.access_token);
+                    return next({ name: 'mainviewempty' });
+                } else {
+                    return next();
+                }
+            } catch (error) {
+                console.log(error);
+                return next();
+            }
+        } else {
+            return next();
+        }
+    } else {
+        return next();
+    }
+});
+
+// //导航守卫
+// router.beforeEach(async (to, from, next) => {
 //     if (to.name === 'nopermission') {
 //         next();
 //         return;
@@ -136,13 +205,35 @@ const router = createRouter({
 //         next();
 //         return;
 //     }
-//     // 检查用户是否登录
-//     const isLoggedIn = checkIfUserIsLoggedIn(); // 这个函数需要根据你的实际情况来实现
-//     if (!isLoggedIn && to.name !== 'login') {
-//         // 如果用户没有登录且不是访问登录页面，则跳转到登录页面
-//         next('/login');
-//     } else {
+//     if (to.name === 'login') {
 //         next();
+//         return;
+//     }
+//     const storageObj = new SessionStorageService();
+//     const rfToken = storageObj.getRfToken();
+//     if (_.isEmpty()) {
+//         next({ name: 'login' });
+//         return;
+//     }
+//     try {
+//         const option = {
+//             headers: {
+//                 Authorization: rfToken + ',' + storageObj.getToken()
+//             }
+//         };
+//         const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
+//         if (refreshResult.ret === 200) {
+//             storageObj.setToken(refreshResult.data.access_token);
+//             next(to);
+//             return;
+//         } else {
+//             next({ name: 'login' });
+//             return;
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         next({ name: 'login' });
+//         return;
 //     }
 // });
 
