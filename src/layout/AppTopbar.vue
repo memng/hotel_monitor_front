@@ -6,8 +6,9 @@ import router from '@/router';
 import SessionStorageService from '@/service/SessionStorageService';
 import HttpService from '@/service/HttpService';
 import moment from 'moment';
-import { useRangMenu } from './global_state/topbar_menu';
-import { useMenuTab } from './global_state/selection_tab';
+import { useRangMenu } from '@/layout/global_state/topbar_menu';
+import { useMenuTab } from '@/layout/global_state/selection_tab';
+import { useGlobalConfig } from '@/layout/config/global_config';
 import _ from 'lodash';
 const { layoutConfig, onMenuToggle } = useLayout();
 const { items, currentMenu } = useRangMenu();
@@ -47,7 +48,7 @@ onBeforeMount(() => {
 });
 
 let intervalId;
-let intervalTime = 6 * 60 * 60 * 1000;
+const { refreshConfigIntervalTime } = useGlobalConfig;
 
 const clearTabs = (event) => {
     if (event.key === sssObj.currentMenuItem) {
@@ -57,7 +58,7 @@ const clearTabs = (event) => {
 }
 
 onMounted(() => {
-    intervalId = setInterval(refreshConfig, intervalTime);
+    intervalId = setInterval(refreshConfig, refreshConfigIntervalTime);
     //currentMenuItem变化时，清空tabs;
     window.addEventListener('storage', clearTabs);
 });
@@ -67,14 +68,18 @@ onUnmounted(() => {
     window.removeEventListener('storage', clearTabs);
 });
 
-async function refreshConfig(){
-    const configRequest = await HttpService.post('/api/refreshConfig', toast);
-    const config = configRequest.config;
-    const storeConfig = sssObj.getConfig();
-    if (JSON.stringify(config) !== JSON.stringify(storeConfig)) {
-        sssObj.setConfig(config);
-        setCurrentMenuItem(config);
-        watchRangeConfig(config);
+async function refreshConfig() {
+    try {
+        const configRequest = await HttpService.post('/api/refreshConfig', toast);
+        const config = configRequest.config;
+        const storeConfig = sssObj.getConfig();
+        if (JSON.stringify(config) !== JSON.stringify(storeConfig)) {
+            sssObj.setConfig(config);
+            setCurrentMenuItem(config);
+            watchRangeConfig(config);
+        }
+    } catch (error) {
+        console.error('refresh_config: ' + error.message);
     }
 }
 
@@ -142,24 +147,25 @@ watch(
     (newValue) => {
         if (newValue) {
             activeTabIndex.value = tabs.value.findIndex((item) => item.market_id === newValue);
-            router.push({ name: 'mainview', params: { market_id: newValue.replace(/\./g, '_') } });
+            //router.push({ name: 'mainview', params: { market_id: newValue.replace(/\./g, '_') } });
         }
+        router.push({ name: 'maindash' });
     },
     { immediate: true }
 );
-watch(
-    tabs,
-    (newValue) => {
-        if (newValue.length === 0) {
-            router.push({ name: 'mainviewempty' });
-        }
-    },
-    { immediate: true }
-)
+// watch(
+//     tabs,
+//     (newValue) => {
+//         if (newValue.length === 0) {
+//             router.push({ name: 'mainviewempty' });
+//         }
+//     },
+//     { immediate: true }
+// )
 
 const onTabChange = (event) => {
     selectedTabId.value = tabs.value[event.index].market_id;
-} 
+}
 
 const doCloseTab = (marketId) => {
     const tabLength = tabs.value.length;
@@ -171,10 +177,8 @@ const doCloseTab = (marketId) => {
             index++;
         }
         selectedTabId.value = tabs.value[index].market_id;
-        router.push({ name: 'mainview', params: { market_id: tabs.value[index].market_id.replace(/\./g, '_') } });
     } else {
         selectedTabId.value = false;
-        router.push({ name: 'mainviewempty' });
     }
     tabs.value = tabs.value.filter((tab) => tab.market_id !== marketId);
 }

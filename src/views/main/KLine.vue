@@ -114,7 +114,7 @@ function updateOption(rawData){
     // 配置项
     option = {
         title: {
-            text: 'K线图'
+            text: '挂单K线图(单位:英镑)'
         },
         tooltip: {
             trigger: 'axis',

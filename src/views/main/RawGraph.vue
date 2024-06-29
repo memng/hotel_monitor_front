@@ -180,6 +180,9 @@ function updataOption(data){
 
     // 配置项
     var option = {
+        title: {
+            text: '成交原图(单位:英镑)'
+        },
         tooltip: {
             trigger: 'axis',
             axisPointer: {

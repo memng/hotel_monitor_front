@@ -5,7 +5,6 @@ import { useRangMenu } from './global_state/topbar_menu';
 import { useMenuTab } from './global_state/selection_tab';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
-import router from '@/router';
 import _ from 'lodash';
 
 const toast = useToast();
@@ -101,7 +100,6 @@ const doCloseTab = (marketId) => {
             index++;
         }
         selectedTabId.value = tabs.value[index].market_id;
-        router.push({ name: 'mainview', params: { market_id: tabs.value[index].market_id.replace(/\./g, '_') } });
     } else {
         selectedTabId.value = false;
     }
@@ -121,8 +119,6 @@ const doOpenTab = (marketId) => {
             if (findItem !== undefined) {
                 tabs.value.push(findItem);
                 selectedTabId.value = findItem.market_id;
-                //console.log(encodeURIComponent(marketId));
-                router.push({ name: 'mainview', params: { market_id: marketId.replace(/\./g, '_') } });
             }
         }
     }

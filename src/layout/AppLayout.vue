@@ -9,6 +9,7 @@ import { useLayout } from '@/layout/composables/layout';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
 import SessionStorageService from '@/service/SessionStorageService';
+import { useGlobalConfig } from '@/layout/config/global_config';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
@@ -68,16 +69,21 @@ const checkScreenWidth = () => {
 };
 
 async function refreshToken() {
-    const tokenHttp = await HttpService.post('/api/refreshToken', toast);
-    const session = new SessionStorageService();
-    session.setToken(tokenHttp.access_token);
+    try {
+        const tokenHttp = await HttpService.post('/api/refreshToken', toast);
+        const session = new SessionStorageService();
+        session.setToken(tokenHttp.access_token);
+    } catch (error) {
+        console.error('refresh_token: ' + error.message);
+    }
 }
 
 let intervalId;
+const { refreshTokenIntervalTime } = useGlobalConfig();
 onMounted(() => {
     checkScreenWidth();
     window.addEventListener('resize', checkScreenWidth);
-    intervalId = setInterval(refreshToken, 30 * 60 * 1000);
+    intervalId = setInterval(refreshToken, refreshTokenIntervalTime);
 });
 
 onBeforeUnmount(() => {

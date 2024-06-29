@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-const selectedTabId = ref();
+const selectedTabId = ref(false);
 const tabs = ref([]);
 
 export function useMenuTab() {

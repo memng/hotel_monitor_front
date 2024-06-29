@@ -101,30 +101,7 @@ const router = createRouter({
                 {
                     path: 'login',
                     name: 'login',
-                    component: () => import('@/views/pages/auth/Login.vue'),
-                    // beforeEnter: async (to, from, next) => {
-                    //     //首先执行自动登录
-                    //     try {
-                    //         const storageObj = new SessionStorageService();
-                    //         const option = {
-                    //             headers: {
-                    //                 Authorization: storageObj.getRfToken() + ',' + storageObj.getToken()
-                    //             }
-                    //         };
-                    //         const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
-                    //         if (refreshResult.ret === 200) {
-                    //             storageObj.setToken(refreshResult.data.access_token);
-                    //             next(to);
-                    //             return;
-                    //         } else {
-                    //             next();
-                    //             return;
-                    //         }
-                    //     } catch (error) {
-                    //         console.log(error);
-                    //         return next();
-                    //     }
-                    // },
+                    component: () => import('@/views/pages/auth/Login.vue')
                 },
             ]
         },
@@ -194,60 +171,4 @@ router.beforeEach(async (to, from, next) => {
         return next();
     }
 });
-
-// //导航守卫
-// router.beforeEach(async (to, from, next) => {
-//     if (to.name === 'nopermission') {
-//         next();
-//         return;
-//     }
-//     if (to.path.startsWith('/index/')) {
-//         next();
-//         return;
-//     }
-//     if (to.name === 'login') {
-//         next();
-//         return;
-//     }
-//     const storageObj = new SessionStorageService();
-//     const rfToken = storageObj.getRfToken();
-//     if (_.isEmpty()) {
-//         next({ name: 'login' });
-//         return;
-//     }
-//     try {
-//         const option = {
-//             headers: {
-//                 Authorization: rfToken + ',' + storageObj.getToken()
-//             }
-//         };
-//         const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
-//         if (refreshResult.ret === 200) {
-//             storageObj.setToken(refreshResult.data.access_token);
-//             next(to);
-//             return;
-//         } else {
-//             next({ name: 'login' });
-//             return;
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         next({ name: 'login' });
-//         return;
-//     }
-// });
-
-// function checkIfUserIsLoggedIn() {
-//     // 从 sessionStorage 中获取存储的 JSON 字符串
-//     const storage = new SessionStorageService();
-//     const userinfo = storage.getUserInfo();
-//     // 如果 userinfo 存在并且解析后的对象有有效的 user_id，则返回 true 表示已登录
-//     if (userinfo) {
-//         if (userinfo.user_id) {
-//             return true;
-//         }
-//     }
-//     // 否则返回 false 表示未登录
-//     return false;
-// }
 export default router;
