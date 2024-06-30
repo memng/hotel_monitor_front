@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
+import AppSimpleLayout from '@/simple_layout/AppSimpleLayout.vue';
 import SessionStorageService from '../service/SessionStorageService';
 import OpenHttpService from '@/service/OpenHttpService';
 import IndexLayout from '@/views/index/IndexLayout.vue';
@@ -14,28 +15,9 @@ const router = createRouter({
             meta: { requiresAuth: true },
             children: [
                 {
-                    path: 'main/:market_id',
-                    name: 'mainview',
-                    component: () => import('@/views/MainView.vue'),
-                    props: (route) => {
-                        // 使用正则表达式匹配参数
-                        const marketId = route.params.market_id.replace(/_/g, '.');
-                        return {
-                            market_id: marketId
-                        };
-                    },
-                    meta: { requiresAuth: true }
-                },
-                {
                     path: 'maindash',
                     name: 'maindash',
                     component: () => import('@/views/MainDash.vue'),
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: 'mainempty',
-                    name: 'mainviewempty',
-                    component: () => import('@/views/MainViewEmpty.vue'),
                     meta: { requiresAuth: true }
                 },
                 {
@@ -60,6 +42,25 @@ const router = createRouter({
                     path: 'logout',
                     name: 'logout',
                     component: () => import('@/views/user/Logout.vue'),
+                    meta: { requiresAuth: true }
+                }
+            ]
+        },
+        {
+            path: '/user/',
+            component: AppSimpleLayout,
+            meta: { requiresAuth: true },
+            children: [
+                {
+                    path: 'usercentre',
+                    name: 'usercentre',
+                    component: () => import('@/views/user/UserCentre.vue'),
+                    meta: { requiresAuth: true }
+                },
+                {
+                    path: 'goodsintro',
+                    name: 'goodsintro',
+                    component: () => import('@/views/user/GoodsIntro.vue'),
                     meta: { requiresAuth: true }
                 }
             ]
@@ -94,6 +95,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/auth/Reg.vue'),
                 },
                 {
+                    path: 'reg_agreement',
+                    name: 'reg_agreement',
+                    component: () => import('@/views/index/RegAgreement.vue'),
+                },
+                {
                     path: 'get_password',
                     name: 'index_get_password',
                     component: () => import('@/views/pages/auth/GetPassword.vue'),
@@ -121,6 +127,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const storageObj = new SessionStorageService();
     const rfToken = storageObj.getRfToken();
+    const atToken = storageObj.getToken();
 
     if (to.matched.some((record) => record.meta.requiresAuth)) {
         // 需要权限的页面
@@ -128,40 +135,18 @@ router.beforeEach(async (to, from, next) => {
             return next({ name: 'login' });
         }
         try {
-            const option = {
-                headers: {
-                    Authorization: `${rfToken},${storageObj.getToken()}`
-                }
-            };
-            const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
-            if (refreshResult.ret === 200) {
-                storageObj.setToken(refreshResult.data.access_token);
-                return next();
-            } else {
-                return next({ name: 'login' });
-            }
+            await refreshToken(storageObj, rfToken, atToken);
+            return next();
         } catch (error) {
-            console.log(error);
             return next({ name: 'login' });
         }
     } else if (to.name === 'login') {
         // 登录页面
         if (!_.isEmpty(rfToken)) {
             try {
-                const option = {
-                    headers: {
-                        Authorization: `${rfToken},${storageObj.getToken()}`
-                    }
-                };
-                const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
-                if (refreshResult.ret === 200) {
-                    storageObj.setToken(refreshResult.data.access_token);
-                    return next({ name: 'mainviewempty' });
-                } else {
-                    return next();
-                }
+                await refreshToken(storageObj, rfToken, atToken);
+                return next({ name: 'maindash' });
             } catch (error) {
-                console.log(error);
                 return next();
             }
         } else {
@@ -171,4 +156,23 @@ router.beforeEach(async (to, from, next) => {
         return next();
     }
 });
+
+async function refreshToken(storageObj, rfToken, atToken) {
+    try {
+        const option = {
+            headers: {
+                Authorization: `${rfToken},${atToken}`
+            }
+        };
+        const refreshResult = await OpenHttpService.post('/open/refreshToken', {}, option);
+        if (refreshResult.ret === 200) {
+            storageObj.setToken(refreshResult.data.access_token);
+        } else {
+            throw new Error(refreshResult.ret);
+        }
+    } catch (error) {
+        console.error('refresh_token_in_router: '.error.message);
+        throw new Error();
+    }
+}
 export default router;

@@ -48,7 +48,7 @@ onBeforeMount(() => {
 });
 
 let intervalId;
-const { refreshConfigIntervalTime } = useGlobalConfig;
+const { refreshConfigIntervalTime } = useGlobalConfig();
 
 const clearTabs = (event) => {
     if (event.key === sssObj.currentMenuItem) {
@@ -153,15 +153,6 @@ watch(
     },
     { immediate: true }
 );
-// watch(
-//     tabs,
-//     (newValue) => {
-//         if (newValue.length === 0) {
-//             router.push({ name: 'mainviewempty' });
-//         }
-//     },
-//     { immediate: true }
-// )
 
 const onTabChange = (event) => {
     selectedTabId.value = tabs.value[event.index].market_id;
@@ -203,7 +194,7 @@ const userInfoItems = [
         label: '退出登录',
         command: () => {
             sssObj.clearAll();
-            router.push({ name: 'login'});
+            router.push({ name: 'login' });
         }
     }
 ];

@@ -1,3 +1,9 @@
+<script setup>
+import router from '@/router';
+function doPushLogin() {
+    router.push({ name: 'login' });
+}
+</script>
 <template>
     <div
         id="hero"
@@ -7,7 +13,7 @@
         <div class="mx-4 md:mx-8 mt-0 md:mt-4">
             <h1 class="text-6xl font-bold text-gray-900 line-height-2">精准、可靠、稳定的必发交易所数据</h1>
             <p class="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">精准还原每一笔必发交易，精确到毫秒</p>
-            <Button label="免费体验" class="p-button-rounded text-xl border-none mt-5 bg-green-500 font-normal text-white line-height-3 px-3"></Button>
+            <Button @click="doPushLogin" label="免费体验" class="p-button-rounded text-xl border-none mt-5 bg-green-500 font-normal text-white line-height-3 px-3"></Button>
         </div>
         <div class="flex justify-content-center md:justify-content-end">
             <img style="width: 609px; height: 420px;" src="/demo/bf/raw_graph.png" alt="Hero Image" class="w-9 md:w-auto" />
@@ -54,7 +60,7 @@
 
         <div class="grid mt-8 pb-2 md:pb-8">
             <div class="flex justify-content-center col-12 lg:col-6 bg-purple-100 p-0 flex-order-1 lg:flex-order-0" style="border-radius: 8px">
-                <img src="/demo/bf/raw_graph_stat.png" class="w-11" alt="mockup mobile" />
+                <img src="/demo/bf/raw_graph_stat.png" style="width: 530px; height: 512px" class="w-11" alt="mockup mobile" />
             </div>
 
             <div class="col-12 lg:col-6 my-auto flex flex-column lg:align-items-end text-center lg:text-right">
@@ -80,7 +86,7 @@
             </div>
 
             <div class="flex justify-content-end flex-order-1 sm:flex-order-2 col-12 lg:col-6 bg-yellow-100 p-0" style="border-radius: 8px">
-                <img src="/demo/bf/odds.png" class="w-11" alt="mockup" />
+                <img src="/demo/bf/odds.png" class="w-11" style="width: 530px; height: 512px" alt="mockup" />
             </div>
         </div>
     </div>

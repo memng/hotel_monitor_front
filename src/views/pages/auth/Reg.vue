@@ -171,7 +171,7 @@ async function doReg() {
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" href="/index/get_password" style="color: var(--primary-color)">已有账号？找回密码</a>
                         </div>
                         <Button @click="doReg()" label="注册" class="w-full p-3 text-xl"></Button>
-                        <p>*注册表示您已阅读并同意<a href="/index/reg">用户注册协议和隐私条款</a></p>
+                        <p class="mt-1">*注册表示您已阅读并同意<a href="/index/reg_agreement">用户注册协议和隐私条款</a></p>
                     </div>
                 </div>
             </div>

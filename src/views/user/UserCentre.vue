@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from 'vue';
+import { shallowRef } from 'vue';
 import Profile from './Profile.vue';
 import ChangePassword from './ChangePassword.vue';
 import Orderlist from './OrderList.vue';
-const currentComponent = ref()
+const currentComponent = shallowRef(Profile);
 const menuItems = [
     {
         id: 1,
@@ -30,8 +30,18 @@ const menuItems = [
 </script>
 
 <template>
-    <div>
-        <TabMenu :model="menuItems"></TabMenu>
-        <component :is="currentComponent"></component>
+    <div class="surface-ground flex justify-content-center main_h_screen min-w-screen overflow-hidden">
+        <div class="contact_main mt-6">
+            <TabMenu :model="menuItems"></TabMenu>
+            <component :is="currentComponent"></component>
+        </div>
     </div>
 </template>
+<style scoped>
+.contact_main {
+    width: 992px;
+}
+.main_h_screen {
+    min-height: 70vh;
+}
+</style>

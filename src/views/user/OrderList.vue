@@ -1,12 +1,14 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import HttpService from '@/service/HttpService';
+import _ from 'lodash';
 
 const orderData = ref();
 
 const fetchOrderData = async () => {
     try {
-        orderData.value = await HttpService.get('/api/getOrderList');
+        const fetchData = await HttpService.get('/api/getOrderList');
+        orderData.value = fetchData.order_list;
     } catch (error) {
         console.error('获取订单数据失败:', error);
     }
@@ -20,7 +22,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <DataTable v-if="orderData !== undefined" :value="orderData" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]" showGridlines tableStyle="min-width: 50rem">
+        <DataTable v-if="!_.isEmpty(orderData)" :value="orderData" paginator :rows="20" :rowsPerPageOptions="[5, 10, 20, 50]" showGridlines tableStyle="min-width: 50rem">
             <Column field="order_no" header="订单号"></Column>
             <Column field="goods_name" header="商品名"></Column>
             <Column field="goods_number" header="数量"></Column>

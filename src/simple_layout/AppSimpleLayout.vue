@@ -1,30 +1,20 @@
 <script setup>
-import { computed, watch, ref, onMounted, onBeforeUnmount } from 'vue';
-import AppTopbar from './AppTopbar.vue';
-import AppFooter from './AppFooter.vue';
-import AppSidebar from './AppSidebar.vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import AppFooter from '@/layout/AppFooter.vue';
 import NotSupport from '@/views/pages/auth/NotSupport.vue';
 import { useLayout } from '@/layout/composables/layout';
 import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
 import SessionStorageService from '@/service/SessionStorageService';
 import { useGlobalConfig } from '@/layout/config/global_config';
+import AppSimpleTopbar from '@/simple_layout/AppSimpleTopbar.vue';
+import router from '@/router';
 
-const { layoutConfig, layoutState, isSidebarActive } = useLayout();
-
-const outsideClickListener = ref(null);
+const { layoutConfig, layoutState } = useLayout();
 
 const isSupported = ref(true);
 
 const toast = useToast();
-
-watch(isSidebarActive, (newVal) => {
-    if (newVal) {
-        bindOutsideClickListener();
-    } else {
-        unbindOutsideClickListener();
-    }
-});
 
 const containerClass = computed(() => {
     return {
@@ -38,30 +28,6 @@ const containerClass = computed(() => {
         'p-ripple-disabled': layoutConfig.ripple.value === false
     };
 });
-const bindOutsideClickListener = () => {
-    if (!outsideClickListener.value) {
-        outsideClickListener.value = (event) => {
-            if (isOutsideClicked(event)) {
-                layoutState.overlayMenuActive.value = false;
-                layoutState.staticMenuMobileActive.value = false;
-                layoutState.menuHoverActive.value = false;
-            }
-        };
-        document.addEventListener('click', outsideClickListener.value);
-    }
-};
-const unbindOutsideClickListener = () => {
-    if (outsideClickListener.value) {
-        document.removeEventListener('click', outsideClickListener);
-        outsideClickListener.value = null;
-    }
-};
-const isOutsideClicked = (event) => {
-    const sidebarEl = document.querySelector('.layout-sidebar');
-    const topbarEl = document.querySelector('.layout-menu-button');
-
-    return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
-};
 
 const checkScreenWidth = () => {
     isSupported.value = window.innerWidth > 991;
@@ -90,21 +56,27 @@ onBeforeUnmount(() => {
     clearInterval(intervalId);
 });
 
+function doPushLogin() {
+    router.push('/');
+}
 </script>
 
 <template>
     <Toast />
     <div class="layout-wrapper" :class="containerClass">
-        <app-topbar></app-topbar>
-        <div class="layout-sidebar">
-            <app-sidebar></app-sidebar>
-        </div>
-        <div class="layout-main-container">
+        <app-simple-topbar></app-simple-topbar>
+        <div class="layout-main-container simple_main" style="margin-left: 0px;">
             <div v-if="isSupported" class="layout-main">
                 <router-view></router-view>
+                <div class="flex justify-content-center">
+                    <Button @click="doPushLogin" label="返回首页" class="p-button-rounded text-xl border-none mt-5 bg-green-500 font-normal text-white line-height-3 px-3"></Button>
+                </div>
             </div>
             <div v-else class="layout-main">
                 <NotSupport></NotSupport>
+                <div class="flex justify-content-center">
+                    <Button @click="doPushLogin" label="返回首页" class="p-button-rounded text-xl border-none mt-5 bg-green-500 font-normal text-white line-height-3 px-3"></Button>
+                </div>
             </div>
             <app-footer></app-footer>
         </div>
@@ -112,4 +84,8 @@ onBeforeUnmount(() => {
     </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.simple_main {
+    margin-left: 0;
+}
+</style>

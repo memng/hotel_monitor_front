@@ -1,12 +1,12 @@
 <template>
-    <div id="pricing" class="py-4 px-4 lg:px-8 my-2 md:my-4">
+    <div id="pricing" class=" py-4 px-4 lg:px-8 my-2 md:my-4">
         <div class="text-center">
             <h2 class="text-900 font-normal mb-2">购买会员</h2>
             <span class="text-600 text-2xl">点击购买/续费会员</span>
         </div>
 
-        <div class="grid justify-content-between mt-8 md:mt-0">
-            <div class="col-12 lg:col-4 p-0 md:p-3 mt-4 md:mt-0">
+        <div class="grid justify-content-center mt-8 md:mt-0">
+            <div class="col-12 lg:col-4 p-0 mr-5 md:p-3 mt-4 md:mt-0">
                 <div class="p-3 flex flex-column border-200 pricing-card cursor-pointer border-2 hover:border-primary transition-duration-300 transition-all" style="border-radius: 10px">
                     <h3 class="text-900 text-center my-5">专业会员</h3>
                     <img src="/demo/images/landing/startup.svg" class="w-10 h-10 mx-auto" alt="startup" />
