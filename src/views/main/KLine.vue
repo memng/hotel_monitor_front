@@ -13,6 +13,7 @@ const loading = ref(false);
 const showNoDataMessage = ref(false);
 let chartContainer;
 let myChart;
+let currentOption;
 
 const props = defineProps({
     market_id: {
@@ -42,6 +43,7 @@ async function refreshChat() {
     const loadData = await initData();
     if (myChart) {
         const option = updateOption(loadData);
+        currentOption = option;
         myChart.setOption(option);
         myChart.resize();
     }
@@ -351,6 +353,7 @@ function initChat(rawData){
         return;
     }
     const option = updateOption(rawData);
+    currentOption = option;
     myChart.setOption(option);
     let selected = false;
     // 使用配置项显示图表
@@ -390,14 +393,14 @@ function initChat(rawData){
             default:
                 break;
         }
-        option.xAxis[0].axisPointer.value = dataIndex;
-        option.xAxis[1].axisPointer.value = dataIndex;
-        option.xAxis[2].axisPointer.value = dataIndex;
-        option.dataZoom[0]['start'] = nowOption.dataZoom[0]['start'];
-        option.dataZoom[0]['end'] = nowOption.dataZoom[0]['end'];
-        option.dataZoom[1]['start'] = nowOption.dataZoom[1]['start'];
-        option.dataZoom[1]['end'] = nowOption.dataZoom[1]['end'];
-        myChart.setOption(option);
+        currentOption.xAxis[0].axisPointer.value = dataIndex;
+        currentOption.xAxis[1].axisPointer.value = dataIndex;
+        currentOption.xAxis[2].axisPointer.value = dataIndex;
+        currentOption.dataZoom[0]['start'] = nowOption.dataZoom[0]['start'];
+        currentOption.dataZoom[0]['end'] = nowOption.dataZoom[0]['end'];
+        currentOption.dataZoom[1]['start'] = nowOption.dataZoom[1]['start'];
+        currentOption.dataZoom[1]['end'] = nowOption.dataZoom[1]['end'];
+        myChart.setOption(currentOption);
         myChart.dispatchAction({
             seriesIndex: 0,
             type: 'showTip',

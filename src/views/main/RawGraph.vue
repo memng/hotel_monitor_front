@@ -27,6 +27,7 @@ const loading = ref(false);
 const showNoDataMessage = ref(false);
 let chartContainer;
 let myChart;
+let currentOption;
 const configMap = {
     between0_100_sum: '0-100订单总和',
     between100_1000_sum: '100-1000订单总和',
@@ -89,6 +90,7 @@ async function refreshChat() {
     const loadData = await initData();
     if (myChart) {
         const option = updataOption(loadData);
+        currentOption = option;
         myChart.setOption(option);
         myChart.resize();
     }
@@ -117,6 +119,7 @@ function initChat(data) {
     //console.log(chartContainer);
     // 初始化 ECharts 实例
     var option = updataOption(data);
+    currentOption = option;
     // 使用配置项绘制图表
     myChart.setOption(option);
     chartContainer.addEventListener('mouseover', () => {
@@ -156,12 +159,12 @@ function initChat(data) {
             default:
                 break;
         }
-        option.xAxis.axisPointer.value = dataIndex;
-        option.dataZoom[0]['start'] = nowOption.dataZoom[0]['start'];
-        option.dataZoom[0]['end'] = nowOption.dataZoom[0]['end'];
-        option.dataZoom[1]['start'] = nowOption.dataZoom[1]['start'];
-        option.dataZoom[1]['end'] = nowOption.dataZoom[1]['end'];
-        myChart.setOption(option);
+        currentOption.xAxis.axisPointer.value = dataIndex;
+        currentOption.dataZoom[0]['start'] = nowOption.dataZoom[0]['start'];
+        currentOption.dataZoom[0]['end'] = nowOption.dataZoom[0]['end'];
+        currentOption.dataZoom[1]['start'] = nowOption.dataZoom[1]['start'];
+        currentOption.dataZoom[1]['end'] = nowOption.dataZoom[1]['end'];
+        myChart.setOption(currentOption);
         myChart.dispatchAction({
             seriesIndex: 0,
             type: 'showTip',
