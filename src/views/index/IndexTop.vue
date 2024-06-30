@@ -47,8 +47,8 @@ const navToReg = () => {
                 </li>
             </ul>
             <div class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
-                <Button @click="navToLogin" label="Login" class="p-button-text p-button-rounded border-none font-light line-height-2 text-green-500"></Button>
-                <Button @click="navToReg" label="Register" class="p-button-rounded border-none ml-5 font-light text-white line-height-2 bg-green-500"></Button>
+                <Button @click="navToLogin" label="登录" class="p-button-text p-button-rounded border-none font-light line-height-2 text-green-500"></Button>
+                <Button @click="navToReg" label="注册" class="p-button-rounded border-none ml-5 font-light text-white line-height-2 bg-green-500"></Button>
             </div>
         </div>
     </div>
