@@ -52,10 +52,14 @@ const { refreshConfigIntervalTime } = useGlobalConfig();
 
 const clearTabs = (event) => {
     if (event.key === sssObj.currentMenuItem) {
-        tabs.value = [];
-        selectedTabId.value = 0;
-        loadCurrentMenuItem(sssObj.getCurrentMenuItem());
+        initMenu();
     }
+}
+
+function initMenu() {
+    tabs.value = [];
+    selectedTabId.value = false;
+    loadCurrentMenuItem(sssObj.getCurrentMenuItem());
 }
 
 onMounted(() => {
@@ -87,8 +91,7 @@ async function refreshConfig() {
 function setCurrentMenuItem(rangeConfig){
     const defaultItem = rangeConfig.find((item) => item.default === 1);
     sssObj.setCurrentMenuItem(defaultItem);
-    //currentMenu.value = defaultItem;
-    loadCurrentMenuItem(defaultItem);
+    initMenu();
 }
 function loadCurrentMenuItem(currentItem){
     currentMenu.value = currentItem;
@@ -125,7 +128,7 @@ function switchCurrentMenuItem(itemId, rangeConfig) {
     const groupId = userInfo.group_id;
     if (foundItem.allow_group_id.includes(groupId)) {
         sssObj.setCurrentMenuItem(foundItem);
-        currentMenu.value = foundItem;
+        initMenu();
     } else {
         toast.add({
             severity: 'error',
