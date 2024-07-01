@@ -54,6 +54,7 @@ const clearTabs = (event) => {
     if (event.key === sssObj.currentMenuItem) {
         tabs.value = [];
         selectedTabId.value = 0;
+        loadCurrentMenuItem(sssObj.getCurrentMenuItem());
     }
 }
 
