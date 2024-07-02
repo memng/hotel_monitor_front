@@ -121,6 +121,44 @@ function watchRangeConfig(rangeConfig){
     });
     items.value = tmepList;
 }
+
+
+function showTemplate(confirmMessage) {
+    confirm.require({
+        group: 'templating',
+        header: '温馨提醒',
+        message: confirmMessage,
+        icon: 'pi pi-exclamation-circle',
+        rejectProps: {
+            label: '取消',
+            icon: 'pi pi-times',
+            outlined: true,
+            size: 'small'
+        },
+        acceptProps: {
+            label: '去购买',
+            icon: 'pi pi-check',
+            size: 'small'
+        },
+        accept: () => {
+            router.push({ name: 'goodsintro' });
+        },
+        reject: () => {}
+    });
+};
+
+function joinWithComma(str1, str2) {
+    if (str1 && str2) {
+        return `${str1}、${str2}`;
+    } else if (str1) {
+        return str1;
+    } else if (str2) {
+        return str2;
+    } else {
+        return '';
+    }
+}
+
 function switchCurrentMenuItem(itemId, rangeConfig) {
     //判断有无切换权限
     const foundItem = rangeConfig.find((item) => item.id === itemId);
@@ -130,12 +168,18 @@ function switchCurrentMenuItem(itemId, rangeConfig) {
         sssObj.setCurrentMenuItem(foundItem);
         initMenu();
     } else {
-        toast.add({
-            severity: 'error',
-            summary: '错误',
-            detail: '您的会员级别不支持查看该时间段数据', // 假设返回的数据中包含错误消息
-            life: 5000
-        });
+        let confirmMessage;
+        let partStr1;
+        let partStr2;
+        if (foundItem.allow_group_id.includes(2)) {
+            partStr1 = '专业版';
+        }
+        if (foundItem.allow_group_id.includes(3)) {
+            partStr2 = '高级版';
+        }
+        confirmMessage = joinWithComma(partStr1, partStr2);
+        confirmMessage = `该时间段数据只有${confirmMessage}会员可以查看`;
+        showTemplate(confirmMessage);
     }
 }
 const toggle = (event) => {
@@ -245,6 +289,14 @@ const toggleUserinfo = (event) => {
             <Button class="topbar_userinfo_button" icon="pi pi-angle-down" :label="userInfoButtonLabel" iconPos="right" @click="toggleUserinfo" />
             <Menu ref="userinfoMenu" id="userinfo_menu" :model="userInfoItems" :popup="true" />
         </div>
+        <ConfirmDialog group="templating">
+            <template #message="slotProps">
+                <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+                    <i :class="slotProps.message.icon" class="text-6xl text-primary-500"></i>
+                    <p>{{ slotProps.message.message }}</p>
+                </div>
+            </template>
+        </ConfirmDialog>
     </div>
 </template>
 

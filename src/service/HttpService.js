@@ -2,7 +2,9 @@
 import router from '../router';
 import SessionStorageService from './SessionStorageService';
 import { useAuthMessage } from '@/layout/global_state/auth_message_show';
-const { message } = useAuthMessage();
+import { useMessage } from '@/layout/global_state/message_show';
+const { message: authMessage } = useAuthMessage();
+const { message: generalMessage } = useMessage();
 
 class HttpService {
     constructor() {
@@ -32,10 +34,11 @@ class HttpService {
             const data = await response.json();
             if (data.ret === 401) {
                 // 跳转到无权限页面
-                router.push('/index/login');
+                generalMessage.value = data.msg;
+                router.push({ name: 'login' });
                 throw new Error(data.msg);
             } else if (data.ret === 403) {
-                message.value = data.msg;
+                authMessage.value = data.msg;
                 router.push({ name: 'nopermission' });
                 throw new Error('no permission');
             } else if (data.ret !== 200) {
