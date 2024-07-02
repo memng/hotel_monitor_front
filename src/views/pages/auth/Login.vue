@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import OpenHttpService from '@/service/OpenHttpService';
@@ -58,22 +58,23 @@ async function doLoginIn() {
 onMounted(() => {
     fetchCaptcha();
     //console.log(message.value);
-    if (message.value !== undefined) {
-        // 错误处理逻辑
-        toast.add({
-            severity: 'info',
-            summary: '提醒',
-            detail: message.value, // 假设返回的数据中包含错误消息
-            life: 10000
-        });
-        message.value = undefined;
-    }
+    nextTick(() => {
+        if (message.value !== undefined) {
+            // 错误处理逻辑
+            toast.add({
+                severity: 'info',
+                summary: '提醒',
+                detail: message.value, // 假设返回的数据中包含错误消息
+                life: 20000
+            });
+            message.value = undefined;
+        }
+    });
 });
 
 </script>
 
 <template>
-    <Toast />
     <div class="surface-ground flex align-items-center justify-content-center mt-6 main_h_screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">

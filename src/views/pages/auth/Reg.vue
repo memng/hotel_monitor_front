@@ -132,7 +132,6 @@ async function doReg() {
 </script>
 
 <template>
-    <Toast />
     <div class="surface-ground flex align-items-center justify-content-center py-6 main_h_screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">

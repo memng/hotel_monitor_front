@@ -26,24 +26,32 @@ onMounted(() => {
 });
 
 onMounted(async () => {
-    const loadData = await initData();
-    showOther.value = loadData.show_other;
-    initChat(loadData.main.info, loadData.main.data, myChart1);
-    if (loadData.show_other) {
-        initChat(loadData.other[0].info, loadData.other[0].data, myChart2);
-        initChat(loadData.other[1].info, loadData.other[1].data, myChart3);
+    try {
+        const loadData = await initData();
+        showOther.value = loadData.show_other;
+        initChat(loadData.main.info, loadData.main.data, myChart1);
+        if (loadData.show_other) {
+            initChat(loadData.other[0].info, loadData.other[0].data, myChart2);
+            initChat(loadData.other[1].info, loadData.other[1].data, myChart3);
+        }
+    } catch (error) {
+        console.error('initBdChat:' + error.message);
     }
 });
 async function refreshChat() {
-    const loadData = await initData();
-    showOther.value = loadData.show_other;
-    initChat(loadData.main.info, loadData.main.data, myChart1);
-    myChart1.resize();
-    if (loadData.show_other) {
-        initChat(loadData.other[0].info, loadData.other[0].data, myChart2);
-        initChat(loadData.other[1].info, loadData.other[1].data, myChart3);
-        myChart2.resize();
-        myChart3.resize();
+    try {
+        const loadData = await initData();
+        showOther.value = loadData.show_other;
+        initChat(loadData.main.info, loadData.main.data, myChart1);
+        myChart1.resize();
+        if (loadData.show_other) {
+            initChat(loadData.other[0].info, loadData.other[0].data, myChart2);
+            initChat(loadData.other[1].info, loadData.other[1].data, myChart3);
+            myChart2.resize();
+            myChart3.resize();
+        }
+    } catch (error) {
+        console.error('refreshBdChat:' + error.message);
     }
 }
 
@@ -51,12 +59,9 @@ async function initData() {
     loading.value = true;
     try {
         return await HttpService.get('/api/getBd', toast, { sid: props.sid });
-    } catch (error) {
-        console.error('errer fetch raw data' + error.message);
     } finally {
         loading.value = false;
     }
-   
 }
 
 function initChat(info, myData, myChart) {

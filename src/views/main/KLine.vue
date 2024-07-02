@@ -34,20 +34,28 @@ watch(chats, (newValue) => {
 });
 
 onMounted(async () => {
-    const loadData = await initData();
-    initChat(loadData);
-    initGrowthTable();
+    try {
+        const loadData = await initData();
+        initChat(loadData);
+        initGrowthTable();
+    } catch (error) {
+        console.error('initKLineChat:' + error.message);
+    }
 });
 
 async function refreshChat() {
-    const loadData = await initData();
-    if (myChart) {
-        const option = updateOption(loadData);
-        currentOption = option;
-        myChart.setOption(option);
-        myChart.resize();
+    try {
+        const loadData = await initData();
+        if (myChart) {
+            const option = updateOption(loadData);
+            currentOption = option;
+            myChart.setOption(option);
+            myChart.resize();
+        }
+        initGrowthTable();
+    } catch (error) {
+        console.error('refreshKLineChat:' + error.message);
     }
-    initGrowthTable();
 }
 
 async function initGrowthTable() {
@@ -64,8 +72,6 @@ async function initData() {
             showNoDataMessage.value = true;
         }
         return fetchRersultData;
-    } catch (error) {
-        console.error('errer fetch raw data' + error.message);
     } finally {
         loading.value = false;
     }

@@ -40,7 +40,7 @@ class HttpService {
             } else if (data.ret === 403) {
                 authMessage.value = data.msg;
                 router.push({ name: 'nopermission' });
-                throw new Error('no permission');
+                throw new Error('无权限');
             } else if (data.ret !== 200) {
                 throw new Error(data.msg);
             }

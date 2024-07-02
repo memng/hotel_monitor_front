@@ -19,7 +19,7 @@ const props = defineProps({
 
 const chats = ref();
 const toast = useToast();
-const datetime24h = ref();
+const datetime24h = ref(moment().format('YYYY-MM-DD HH:mm'));
 const statData = ref([]);
 const selectionName = ref();
 const amountItem = ref();
@@ -62,9 +62,13 @@ watch(chats, (newValue) => {
 });
 
 onMounted(async () => {
-    const loadData = await initData();
-    initChat(loadData);
-    initAmountStat();
+    try {
+        const loadData = await initData();
+        initChat(loadData);
+        initAmountStat();
+    } catch (error) {
+        console.error('initRawGraphChat:' + error.message);
+    }
 });
 async function initAmountStat() {
     const result = await HttpService.get('/api/getAmountStat', toast, { market_id: props.market_id, selection_id: props.selection_id });
@@ -79,22 +83,24 @@ async function initData() {
             showNoDataMessage.value = true;
         }
         return fetchResultData;
-    } catch (error) {
-        console.error('errer fetch raw data' + error.message);
     } finally {
         loading.value = false;
     }
 }
 
 async function refreshChat() {
-    const loadData = await initData();
-    if (myChart) {
-        const option = updataOption(loadData);
-        currentOption = option;
-        myChart.setOption(option);
-        myChart.resize();
+    try {
+        const loadData = await initData();
+        if (myChart) {
+            const option = updataOption(loadData);
+            currentOption = option;
+            myChart.setOption(option);
+            myChart.resize();
+        }
+        initAmountStat();
+    } catch (error) {
+        console.log('refreshRawGraphChat:' + error.message);
     }
-    initAmountStat();
 }
 
 async function dealSelectDate(){

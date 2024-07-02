@@ -25,27 +25,33 @@ onMounted(() => {
 });
 
 onMounted(async () => {
-    const loadData = await initData();
-    initChat(loadData[0].info, loadData[0].data, myChart1);
-    initChat(loadData[1].info, loadData[1].data, myChart2);
-    initChat(loadData[2].info, loadData[2].data, myChart3);
+    try {
+        const loadData = await initData();
+        initChat(loadData[0].info, loadData[0].data, myChart1);
+        initChat(loadData[1].info, loadData[1].data, myChart2);
+        initChat(loadData[2].info, loadData[2].data, myChart3);
+    } catch (error) {
+        console.error('initOddsChat:' + error.message);
+    }
 });
 async function refreshChat() {
-    const loadData = await initData();
-    initChat(loadData[0].info, loadData[0].data, myChart1);
-    initChat(loadData[1].info, loadData[1].data, myChart2);
-    initChat(loadData[2].info, loadData[2].data, myChart3);
-    myChart1.resize();
-    myChart2.resize();
-    myChart3.resize();
+    try {
+        const loadData = await initData();
+        initChat(loadData[0].info, loadData[0].data, myChart1);
+        initChat(loadData[1].info, loadData[1].data, myChart2);
+        initChat(loadData[2].info, loadData[2].data, myChart3);
+        myChart1.resize();
+        myChart2.resize();
+        myChart3.resize();
+    } catch (error) {
+        console.error('refreshOddsChat:' + error.message);
+    }
 }
 
 async function initData() {
     loading.value = true;
     try {
         return await HttpService.get('/api/getOdds', toast, { sid: props.sid });
-    } catch (error) {
-        console.error('errer fetch raw data' + error.message);
     } finally {
         loading.value = false;
     }

@@ -9,10 +9,13 @@ import moment from 'moment';
 import { useRangMenu } from '@/layout/global_state/topbar_menu';
 import { useMenuTab } from '@/layout/global_state/selection_tab';
 import { useGlobalConfig } from '@/layout/config/global_config';
+import { useConfirm } from 'primevue/useconfirm';
+
 import _ from 'lodash';
 const { layoutConfig, onMenuToggle } = useLayout();
 const { items, currentMenu } = useRangMenu();
 const { tabs, selectedTabId } = useMenuTab();
+const confirm = useConfirm();
 
 
 const logoUrl = computed(() => {
@@ -129,17 +132,8 @@ function showTemplate(confirmMessage) {
         header: '温馨提醒',
         message: confirmMessage,
         icon: 'pi pi-exclamation-circle',
-        rejectProps: {
-            label: '取消',
-            icon: 'pi pi-times',
-            outlined: true,
-            size: 'small'
-        },
-        acceptProps: {
-            label: '去购买',
-            icon: 'pi pi-check',
-            size: 'small'
-        },
+        acceptLabel: '去购买',
+        rejectLabel: '取消',
         accept: () => {
             router.push({ name: 'goodsintro' });
         },

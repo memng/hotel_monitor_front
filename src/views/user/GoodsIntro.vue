@@ -63,7 +63,9 @@ async function doCreateOrder() {
     } catch (error) {
         console.error('errer fetch raw data' + error.message);
     } finally {
-        submitDisable.value = false;
+        setTimeout(() => {
+            submitDisable.value = false;
+        }, 3000); // 10秒后执行
     }
 }
 
@@ -141,25 +143,40 @@ async function doReSelect() {
             </div>
         </div>
     </div>
-    <div v-if="step2" class="flex flex-column">
-        <div>
-            <span>名称: {{ goodsName }}</span>
+    <div v-if="step2" class="flex justify-content-center">
+        <div class="flex flex-column order_main gap-5 text-lg">
+            <div>
+                <span>名称: {{ goodsName }}</span>
+            </div>
+            <div>
+                <InputNumber v-model="goodsNumber" suffix="个月" inputId="horizontal-buttons" inputClass="order_input_number" :min="1" :max="99" showButtons buttonLayout="horizontal">
+                    <template #incrementbuttonicon>
+                        <span class="pi pi-plus" />
+                    </template>
+                    <template #decrementbuttonicon>
+                        <span class="pi pi-minus" />
+                    </template>
+                </InputNumber>
+            </div>
+            <div>总价: {{ totalPrice }}</div>
+            <div class="flex flex-row">
+                <div>
+                    <Button label="提交" :disabled="submitDisable" @click="doCreateOrder" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-green-500 text-white"></Button>
+                </div>
+                <div class="ml-2">
+                    <Button label="返回重选" @click="doReSelect" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-green-500 text-white"></Button>
+                </div>
+            </div>
+            <div v-show="false" ref="container"></div>
         </div>
-        <div>
-            <InputNumber v-model="goodsNumber" suffix="个月" inputId="horizontal-buttons" showButtons buttonLayout="horizontal">
-                <template #incrementbuttonicon>
-                    <span class="pi pi-plus" />
-                </template>
-                <template #decrementbuttonicon>
-                    <span class="pi pi-minus" />
-                </template>
-            </InputNumber>
-        </div>
-        <div>总价: {{ totalPrice }}</div>
-        <div>
-            <Button label="提交" :disabled="submitDisable" @click="doCreateOrder" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-green-500 text-white"></Button>
-            <Button label="返回重选" @click="doReSelect" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-green-500 text-white"></Button>
-        </div>
-        <div v-show="false" ref="container"></div>
     </div>
 </template>
+
+<style lang="scss">
+.order_main {
+    width: 992px;
+}
+.order_input_number {
+    width: 100px;
+}
+</style>
