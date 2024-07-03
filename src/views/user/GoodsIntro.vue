@@ -159,6 +159,10 @@ async function doReSelect() {
                 </InputNumber>
             </div>
             <div>总价: {{ totalPrice }}</div>
+            <div class="flex flex-row align-items-center">
+                <div>支付方式：</div>
+                <div><img class="order_alipay_logo" src="/demo/bf/alipay_logo.png" /></div>
+            </div>
             <div class="flex flex-row">
                 <div>
                     <Button label="提交" :disabled="submitDisable" @click="doCreateOrder" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-green-500 text-white"></Button>
@@ -178,5 +182,9 @@ async function doReSelect() {
 }
 .order_input_number {
     width: 100px;
+}
+.order_alipay_logo {
+    width: 100px;
+    height: auto;
 }
 </style>

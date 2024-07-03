@@ -19,7 +19,8 @@ const props = defineProps({
 
 const chats = ref();
 const toast = useToast();
-const datetime24h = ref(moment().format('YYYY-MM-DD HH:mm'));
+const datetime24hStart = ref();
+const datetime24hEnd = ref();
 const statData = ref([]);
 const selectionName = ref();
 const amountItem = ref();
@@ -103,18 +104,34 @@ async function refreshChat() {
     }
 }
 
-async function dealSelectDate(){
-    const isSelectOver = datetime24h.value.every((ele) => ele instanceof Date);
-    if (isSelectOver) {
+const isInvalidDate = (date) => {
+    return !(date instanceof Date) || isNaN(date.getTime());
+};
+
+async function doStat(){
+    try {
+        if (isInvalidDate(datetime24hStart.value) || isInvalidDate(datetime24hEnd.value)) {
+             // 显示错误消息
+            toast.add({
+                severity: 'error',
+                summary: '错误',
+                detail: '需要选择一个开始时间和结束时间才能进行统计',
+                life: 5000
+            });
+            return;
+        }
         const params = {
             market_id: props.market_id,
             selection_id: props.selection_id,
-            start_date: moment(datetime24h.value[0]).format('YYYY-MM-DD'),
-            end_date: moment(datetime24h.value[1]).format('YYYY-MM-DD')
+            start_date: moment(datetime24hStart.value).format('YYYY-MM-DD'),
+            end_date: moment(datetime24hEnd.value).format('YYYY-MM-DD')
         };
         statData.value = await HttpService.get('/api/getRawStat', toast, params);
+    } catch (error) {
+        console.error('doStat:' + error.message);
     }
 }
+
 
 function initChat(data) {
     if (!chartContainer || !myChart) {
@@ -345,21 +362,16 @@ function calculateDiff(a1, a2) {
             <Column field="pure_amount_percent" header="总量占比(3500以下)"></Column>
         </DataTable>
     </div>
-    <div class="flex-auto">
-        <Calendar
-            id="calendar-24h"
-            showIcon
-            placeholder="选择一个时间段进行统计"
-            v-model="datetime24h"
-            showTime
-            hourFormat="24"
-            dateFormat="yy-mm-dd"
-            selectionMode="range"
-            :selectOtherMonths="true"
-            :hideOnRangeSelection="true"
-            @date-select="dealSelectDate"
-            inputClass="raw_graph_time_button"
-        />
+    <div class="flex flex-row gap-2">
+        <div>
+            <Calendar id="calendar-24h-start" showIcon placeholder="选择/填入开始时间" v-model="datetime24hStart" showTime hourFormat="24" dateFormat="yy-mm-dd" :selectOtherMonths="true" inputClass="raw_graph_time_button" />
+        </div>
+        <div>
+            <Calendar id="calendar-24h-end" showIcon placeholder="选择/填入开始时间" v-model="datetime24hEnd" showTime hourFormat="24" dateFormat="yy-mm-dd" :selectOtherMonths="true" inputClass="raw_graph_time_button" />
+        </div>
+        <div>
+            <Button class="ml-1" label="统计" @click="doStat"></Button>
+        </div>
     </div>
     <div>
         <DataTable v-if="statData.length !== 0" :value="tableData" showGridlines tableStyle="min-width: 50rem">
@@ -386,7 +398,7 @@ function calculateDiff(a1, a2) {
     outline-color: var(--primary-color);
 }
 .raw_graph_time_button {
-    width: 400px;
+    width: 150px;
 }
 .raw_graph_loading {
     width: 100%;
