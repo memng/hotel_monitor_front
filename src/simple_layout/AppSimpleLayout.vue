@@ -57,7 +57,7 @@ onBeforeUnmount(() => {
 });
 
 function doPushLogin() {
-    router.push('/');
+    router.push({ name: 'maindash' });
 }
 </script>
 

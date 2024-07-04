@@ -15,6 +15,10 @@ const router = createRouter({
             meta: { requiresAuth: true },
             children: [
                 {
+                    path: '',
+                    redirect: 'maindash'
+                },
+                {
                     path: 'maindash',
                     name: 'maindash',
                     component: () => import('@/views/MainDash.vue'),
@@ -24,18 +28,6 @@ const router = createRouter({
                     path: 'nopermission',
                     name: 'nopermission',
                     component: () => import('@/views/pages/auth/Access.vue'),
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: 'usercentre',
-                    name: 'usercentre',
-                    component: () => import('@/views/user/UserCentre.vue'),
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: 'goodsintro',
-                    name: 'goodsintro',
-                    component: () => import('@/views/user/GoodsIntro.vue'),
                     meta: { requiresAuth: true }
                 },
                 {

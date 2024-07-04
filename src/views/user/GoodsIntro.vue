@@ -97,7 +97,7 @@ async function doReSelect() {
                     <ul class="my-5 list-none p-0 flex text-900 flex-column">
                         <li class="py-2">
                             <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
-                            <span class="text-xl line-height-3">24/05/21-24/07/15期间收录比赛的全部数据</span>
+                            <span class="text-xl line-height-3">24/05/22-24/07/04期间收录比赛的全部数据</span>
                         </li>
                         <li class="py-2">
                             <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>

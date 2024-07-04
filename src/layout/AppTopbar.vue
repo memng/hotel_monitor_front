@@ -191,7 +191,7 @@ watch(
             activeTabIndex.value = tabs.value.findIndex((item) => item.market_id === newValue);
             //router.push({ name: 'mainview', params: { market_id: newValue.replace(/\./g, '_') } });
         }
-        router.push({ name: 'maindash' });
+        //router.push({ name: 'maindash' });
     },
     { immediate: true }
 );

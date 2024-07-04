@@ -75,6 +75,7 @@ const sendMessageCode = async () => {
             throw new Error(response.msg);
         }
     } catch (error) {
+        fetchCaptcha();
         // 错误处理逻辑
         toast.add({
             severity: 'error',

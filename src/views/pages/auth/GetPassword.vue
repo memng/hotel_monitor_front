@@ -119,6 +119,7 @@ async function doGetPassword() {
             throw new Error(data.msg);
         }
     } catch (error) {
+        fetchCaptcha();
         // 错误处理逻辑
         toast.add({
             severity: 'error',

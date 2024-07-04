@@ -40,11 +40,12 @@ async function doLoginIn() {
             sessionStorageObj.setConfig(data.data.config);
             sessionStorageObj.setRfToken(data.data.refresh_token);
             sessionStorageObj.setToken(data.data.access_token);
-            router.push('/');
+            router.push({ name: 'maindash' });
         } else {
             throw new Error(data.msg);
         }
     } catch (error) {
+        fetchCaptcha();
         // 错误处理逻辑
         toast.add({
             severity: 'error',
