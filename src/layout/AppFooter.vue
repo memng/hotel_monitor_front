@@ -1,19 +1,11 @@
 <script setup>
-import { useLayout } from '@/layout/composables/layout';
-import { computed } from 'vue';
-
-const { layoutConfig } = useLayout();
-
-const logoUrl = computed(() => {
-    return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
-});
 </script>
 
 <template>
     <div class="layout-footer">
-        <img :src="logoUrl" alt="Logo" height="20" class="mr-2" />
-        by
-        <span class="font-medium ml-2">bf-data.cn</span>
+        <p class="text-center">
+            <span class="text-red-500">*为了良好的图表使用体验，建议使用电脑浏览器访问</span>
+        </p>
     </div>
 </template>
 <style lang="scss" scoped></style>

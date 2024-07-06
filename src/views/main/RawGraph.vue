@@ -29,6 +29,7 @@ const showNoDataMessage = ref(false);
 let chartContainer;
 let myChart;
 let currentOption;
+let currentData;
 const configMap = {
     between0_100_sum: '0-100订单总和',
     between100_1000_sum: '100-1000订单总和',
@@ -95,6 +96,7 @@ async function refreshChat() {
         if (myChart) {
             const option = updataOption(loadData);
             currentOption = option;
+            currentData = loadData;
             myChart.setOption(option);
             myChart.resize();
         }
@@ -143,6 +145,7 @@ function initChat(data) {
     // 初始化 ECharts 实例
     var option = updataOption(data);
     currentOption = option;
+    currentData = data;
     // 使用配置项绘制图表
     myChart.setOption(option);
     chartContainer.addEventListener('mouseover', () => {
@@ -176,7 +179,7 @@ function initChat(data) {
                 break;
             // 左
             case 'ArrowRight':
-                dataIndex < data.length - 1 ? ++dataIndex : data.length - 1;
+                dataIndex < currentData.length - 1 ? ++dataIndex : currentData.length - 1;
                 params.stopPropagation();
                 break;
             default:

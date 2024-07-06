@@ -63,9 +63,9 @@ const isOutsideClicked = (event) => {
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
 
-const checkScreenWidth = () => {
-    isSupported.value = window.innerWidth > 991;
-};
+// const checkScreenWidth = () => {
+//     isSupported.value = window.innerWidth > 991;
+// };
 
 async function refreshToken() {
     try {
@@ -80,13 +80,13 @@ async function refreshToken() {
 let intervalId;
 const { refreshTokenIntervalTime } = useGlobalConfig();
 onMounted(() => {
-    checkScreenWidth();
-    window.addEventListener('resize', checkScreenWidth);
+    //checkScreenWidth();
+    //window.addEventListener('resize', checkScreenWidth);
     intervalId = setInterval(refreshToken, refreshTokenIntervalTime);
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', checkScreenWidth);
+    //window.removeEventListener('resize', checkScreenWidth);
     clearInterval(intervalId);
 });
 

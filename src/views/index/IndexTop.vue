@@ -1,48 +1,90 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import router from '@/router';
-import { computed } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 
 const { layoutConfig } = useLayout();
+const isMenuVisible = ref(false); 
 
 const logoUrl = computed(() => {
     return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
 });
+const closeMenu = () => {
+    isMenuVisible.value = false;
+};
+
+const toggleMenu = () => {
+    isMenuVisible.value = !isMenuVisible.value;
+};
 
 const navToLogin = () => {
-    router.push('/index/login');
-}
+    closeMenu();
+    nextTick(() => {
+        router.push('/index/login');
+    });
+};
 
 const navToReg = () => {
-    router.push('/index/reg');
-}
+    closeMenu();
+    nextTick(() => {
+        router.push('/index/reg');
+    });
+};
+
+const navToHome = () => {
+    closeMenu();
+    nextTick(() => {
+        router.push('/index/home');
+    });
+};
+
+const navToPrice = () => {
+    closeMenu();
+    nextTick(() => {
+        router.push('/index/price');
+    });
+};
+
+const navToFaq = () => {
+    closeMenu();
+    nextTick(() => {
+        router.push('/index/faq');
+    });
+};
+
+const navToContact = () => {
+    closeMenu();
+    nextTick(() => {
+        router.push('/index/contact');
+    });
+};
 </script>
 <template>
     <Toast :baseZIndex="100" />
     <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
         <a class="flex align-items-center" href="#"> <img :src="logoUrl" alt="Sakai Logo" height="50" class="mr-0 lg:mr-2" /><span class="text-900 white-space-nowrap font-medium text-2xl line-height-3 mr-8">bf-data</span> </a>
-        <a class="cursor-pointer block lg:hidden text-700 p-ripple" v-ripple v-styleclass="{ selector: '@next', enterClass: 'hidden', leaveToClass: 'hidden', hideOnOutsideClick: true }">
+        <a class="cursor-pointer block lg:hidden text-700 p-ripple" v-ripple @click="toggleMenu">
             <i class="pi pi-bars text-4xl"></i>
         </a>
-        <div class="align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top: 120px">
+        <div class="index_top_menu-container align-items-center surface-0 flex-grow-1 justify-content-between lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top: 120px" v-show="isMenuVisible">
             <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
                 <li>
-                    <a href="/index/home" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                    <a href="#" @click.prevent="navToHome" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
                         <span>首页</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/index/price" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                    <a href="#" @click.prevent="navToPrice"  class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
                         <span>价格</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/index/faq" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                    <a href="#" @click.prevent="navToFaq" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
                         <span>faq</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/index/contact" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                    <a href="#" @click.prevent="navToContact" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
                         <span>联系我们</span>
                     </a>
                 </li>
@@ -54,3 +96,12 @@ const navToReg = () => {
         </div>
     </div>
 </template>
+<style scoped>
+
+/* Media query to handle large screens */
+@media (min-width: 1024px) {
+    .index_top_menu-container {
+        display: flex !important;
+    }
+}
+</style>

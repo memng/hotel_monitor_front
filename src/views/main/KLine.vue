@@ -14,6 +14,7 @@ const showNoDataMessage = ref(false);
 let chartContainer;
 let myChart;
 let currentOption;
+let currentData;
 
 const props = defineProps({
     market_id: {
@@ -49,6 +50,7 @@ async function refreshChat() {
         if (myChart) {
             const option = updateOption(loadData);
             currentOption = option;
+            currentData = loadData;
             myChart.setOption(option);
             myChart.resize();
         }
@@ -360,6 +362,7 @@ function initChat(rawData){
     }
     const option = updateOption(rawData);
     currentOption = option;
+    currentData = rawData;
     myChart.setOption(option);
     let selected = false;
     // 使用配置项显示图表
@@ -393,7 +396,7 @@ function initChat(rawData){
                 break;
             // 左
             case 'ArrowRight':
-                dataIndex < rawData.length - 1 ? ++dataIndex : rawData.length - 1;
+                dataIndex < currentData.length - 1 ? ++dataIndex : currentData.length - 1;
                 params.stopPropagation();
                 break;
             default:

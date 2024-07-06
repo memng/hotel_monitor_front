@@ -16,7 +16,7 @@ function doPushLogin() {
             <Button @click="doPushLogin" label="免费体验" class="p-button-rounded text-xl border-none mt-5 bg-green-500 font-normal text-white line-height-3 px-3"></Button>
         </div>
         <div class="flex justify-content-center md:justify-content-end">
-            <img style="width: 609px; height: 420px;" src="/demo/bf/raw_graph.png" alt="Hero Image" class="w-9 md:w-auto" />
+            <img src="/demo/bf/raw_graph.png" alt="Hero Image" class="w-9 md:w-auto top_raw_graph" />
         </div>
     </div>
 
@@ -28,7 +28,7 @@ function doPushLogin() {
 
         <div class="grid mt-8 pb-2 md:pb-8">
             <div class="flex justify-content-center col-12 lg:col-6 bg-purple-100 p-0 flex-order-1 lg:flex-order-0" style="border-radius: 8px">
-                <img src="/demo/bf/k_line.png" class="w-11" style="width: 530px; height: 512px" alt="mockup mobile" />
+                <img src="/demo/bf/k_line.png" class="w-11 main_item"  alt="mockup mobile" />
             </div>
 
             <div class="col-12 lg:col-6 my-auto flex flex-column lg:align-items-end text-center lg:text-right">
@@ -54,13 +54,13 @@ function doPushLogin() {
             </div>
 
             <div class="flex justify-content-end flex-order-1 sm:flex-order-2 col-12 lg:col-6 bg-yellow-100 p-0" style="border-radius: 8px">
-                <img src="/demo/bf/bd.png" class="w-11" style="width: 530px; height: 512px" alt="mockup" />
+                <img src="/demo/bf/bd.png" class="w-11 main_item" alt="mockup" />
             </div>
         </div>
 
         <div class="grid mt-8 pb-2 md:pb-8">
             <div class="flex justify-content-center col-12 lg:col-6 bg-purple-100 p-0 flex-order-1 lg:flex-order-0" style="border-radius: 8px">
-                <img src="/demo/bf/raw_graph_stat.png" style="width: 530px; height: 512px" class="w-11" alt="mockup mobile" />
+                <img src="/demo/bf/raw_graph_stat.png"  class="w-11 main_item" alt="mockup mobile" />
             </div>
 
             <div class="col-12 lg:col-6 my-auto flex flex-column lg:align-items-end text-center lg:text-right">
@@ -86,8 +86,18 @@ function doPushLogin() {
             </div>
 
             <div class="flex justify-content-end flex-order-1 sm:flex-order-2 col-12 lg:col-6 bg-yellow-100 p-0" style="border-radius: 8px">
-                <img src="/demo/bf/odds.png" class="w-11" style="width: 530px; height: 512px" alt="mockup" />
+                <img src="/demo/bf/odds.png" class="w-11 main_item" alt="mockup" />
             </div>
         </div>
     </div>
 </template>
+<style scoped>
+.top_raw_graph {
+    max-width: 609px !important;
+    height: auto;
+}
+.main_item {
+    max-width: 530px;
+    height: auto;
+}
+</style>
