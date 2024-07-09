@@ -28,7 +28,7 @@ const fetchCaptcha = async () => {
             console.error('获取验证码失败:', response.ret, response.msg);
         }
     } catch (error) {
-        console.error('获取验证码失败:', error);
+        console.error('获取验证码失败:', error.message);
     }
 };
 

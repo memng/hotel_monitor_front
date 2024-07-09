@@ -69,22 +69,22 @@ const navToContact = () => {
         <div class="index_top_menu-container align-items-center surface-0 flex-grow-1 justify-content-between lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top: 120px" v-show="isMenuVisible">
             <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
                 <li>
-                    <a href="#" @click.prevent="navToHome" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                    <a href="/index/home" @click.prevent="navToHome" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
                         <span>首页</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" @click.prevent="navToPrice"  class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                    <a href="/index/price" @click.prevent="navToPrice"  class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
                         <span>价格</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" @click.prevent="navToFaq" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                    <a href="/index/faq" @click.prevent="navToFaq" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
                         <span>faq</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" @click.prevent="navToContact" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                    <a href="/index/contact" @click.prevent="navToContact" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
                         <span>联系我们</span>
                     </a>
                 </li>
