@@ -88,12 +88,12 @@ const router = createRouter({
                     component: () => import('@/views/index/IndexContact.vue'),
                 },
                 {
-                    path: 'category/:id(\\d+).html', // 匹配形如 123.html 的路径
+                    path: 'category/:id(\\d+)', // 匹配形如 123.html 的路径
                     component: () => import('@/views/index/IndexCategory.vue'),
                     name: 'index_category'
                 },
                 {
-                    path: 'page/:id(\\d+).html',
+                    path: 'page/:id(\\d+)',
                     component: () => import('@/views/index/IndexPage.vue'),
                     name: 'index_article'
                 },

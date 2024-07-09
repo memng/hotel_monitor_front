@@ -1,16 +1,16 @@
 <script setup>
 import router from '@/router';
 import OpenHttpService from '@/service/OpenHttpService';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 const route = useRoute();
-const id = route.params.id;
+const id = ref(route.params.id);
 
 const data = ref([]);
 
 const fetchData = async () => {
     try {
-        const response = OpenHttpService.get('/article/getById', { id: id });
+        const response = await OpenHttpService.get('/article/getById', { id: id.value });
         if (response.ret === 200) {
             data.value = response.data;
         } else {
@@ -21,9 +21,25 @@ const fetchData = async () => {
     }
 };
 
+watch(
+    () => route.params.id,
+    (newId) => {
+        id.value = newId;
+        fetchData();
+    }
+);
+
 function navToList() {
-    router.push(`/index/category/${data.value.cid}.html`);
+    router.push(`/index/category/${data.value.cid}`);
 }
+
+const decodeHtml = (html) => {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = html;
+    return txt.value;
+};
+
+const decodedContent = computed(() => decodeHtml(data.value.content));
 
 onMounted(() => {
     fetchData();
@@ -31,10 +47,10 @@ onMounted(() => {
 </script>
 <template>
     <div class="surface-ground flex justify-content-center main_h_screen min-w-screen overflow-hidden">
-        <div class="contact_main mt-6">
+        <div class="page_contact_main mt-6">
             <h2>{{ data.title }}</h2>
             <p>{{ data.post_time }}</p>
-            <div v-html="data.content"></div>
+            <div v-html="decodedContent"></div>
             <div class="flex justify-content-center">
                 <Button @click="navToList" label="返回" class="p-button-rounded text-xl border-none mt-5 bg-green-500 font-normal text-white line-height-3 px-3"></Button>
             </div>
@@ -42,26 +58,20 @@ onMounted(() => {
     </div>
 </template>
 <style scoped>
-.contact_main {
+.page_contact_main {
     min-width: 300px;
     max-width: 1500px;
     width: 80%;
 }
+
 .main_h_screen {
     min-height: 70vh;
 }
 </style>
 
 <style lang="scss">
-.custom-datatable .p-datatable-tbody > tr {
-    border-bottom: 1px dashed #ccc;
-}
-
-.custom-datatable .p-datatable-tbody > tr:last-child {
-    border-bottom: none;
-}
-
-.custom-datatable .p-datatable-tbody > tr > td {
-    border: none;
+.page_contact_main img {
+    width: 100%;
+    height: auto;
 }
 </style>

@@ -58,6 +58,13 @@ const navToContact = () => {
         router.push('/index/contact');
     });
 };
+const navToCategory = (id) => {
+    closeMenu();
+    nextTick(() => {
+        router.push(`/index/category/${id}`);
+    });
+};
+
 </script>
 <template>
     <Toast :baseZIndex="100" />
@@ -79,8 +86,18 @@ const navToContact = () => {
                     </a>
                 </li>
                 <li>
+                    <a href="/index/category/1" @click.prevent="navToCategory(1)" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                        <span>网站使用</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/index/category/2" @click.prevent="navToCategory(2)" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
+                        <span>必发分析</span>
+                    </a>
+                </li>
+                <li>
                     <a href="/index/faq" @click.prevent="navToFaq" class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3 p-ripple" v-ripple>
-                        <span>faq</span>
+                        <span>常见问题</span>
                     </a>
                 </li>
                 <li>

@@ -1,19 +1,19 @@
 <script setup>
 import router from '@/router';
 import OpenHttpService from '@/service/OpenHttpService';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 const route = useRoute();
-const cid = route.params.id;
 
 const data = ref([]);
 const totalRecords = ref(0);
 const rows = ref(20);
 const page = ref(0);
+const cid = ref(route.params.id);
 
 const fetchData = async () => {
     try {
-        const response = OpenHttpService.get('/article/getByCid', { cid: cid, page_num: page.value + 1, page_size: rows.value });
+        const response = await OpenHttpService.get('/article/getByCid', { cid: cid.value, page_num: page.value + 1, page_size: rows.value });
         if (response.ret === 200) {
             data.value = response.data.list;
             totalRecords.value = response.data.total;
@@ -25,6 +25,14 @@ const fetchData = async () => {
     }
 };
 
+watch(
+    () => route.params.id,
+    (newId) => {
+        cid.value = newId;
+        fetchData();
+    }
+);
+
 const onPage = (event) => {
     page.value = event.page + 1;
     rows.value = event.rows;
@@ -32,7 +40,7 @@ const onPage = (event) => {
 };
 
 function navToDetail(id) {
-    router.push(`/index/page/${id}.html`);
+    router.push(`/index/page/${id}`);
 }
 
 onMounted(() => {
@@ -46,7 +54,7 @@ onMounted(() => {
                 <DataTable :value="data" :paginator="true" :rows="rows" :totalRecords="totalRecords" :showHeader="false" class="custom-datatable" @page="onPage">
                     <Column field="title" :bodyStyle="{ 'text-align': 'left' }">
                         <template #body="slotProps">
-                            <a :href="`/index/page/${slotProps.data.id}.html`" @click.prevent="navToDetail(slotProps.data.id)">
+                            <a class="category_link" :href="`/index/page/${slotProps.data.id}`" @click.prevent="navToDetail(slotProps.data.id)">
                                 {{ slotProps.data.title }}
                             </a>
                         </template>
@@ -66,6 +74,9 @@ onMounted(() => {
 .main_h_screen {
     min-height: 70vh;
 }
+.category_link {
+    color: black;
+}
 </style>
 
 <style lang="scss">
@@ -73,11 +84,14 @@ onMounted(() => {
     border-bottom: 1px dashed #ccc;
 }
 
-.custom-datatable .p-datatable-tbody > tr:last-child {
+.custom-datatable .p-datatable-tbody > tr:last-child > td {
     border-bottom: none;
 }
 
 .custom-datatable .p-datatable-tbody > tr > td {
+    border-bottom: 1px dashed #ccc;
+}
+.custom-datatable .p-datatable-thead > tr > th {
     border: none;
 }
 </style>
