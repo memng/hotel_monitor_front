@@ -17,6 +17,7 @@ const fetchData = async () => {
         if (response.ret === 200) {
             data.value = response.data.list;
             totalRecords.value = response.data.total;
+            document.title = response.data.category_name + '|bf-data网';
         } else {
             console.error('获取文章列表失败');
         }

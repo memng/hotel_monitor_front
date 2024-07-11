@@ -13,6 +13,7 @@ const fetchData = async () => {
         const response = await OpenHttpService.get('/article/getById', { id: id.value });
         if (response.ret === 200) {
             data.value = response.data;
+            document.title = response.data.title + '|bf-data网';
         } else {
             console.error('获取文章失败');
         }
