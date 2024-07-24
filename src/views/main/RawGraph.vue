@@ -26,6 +26,12 @@ const selectionName = ref();
 const amountItem = ref();
 const loading = ref(false);
 const showNoDataMessage = ref(false);
+const baseInfo = ref({
+    event_info: '',
+    begin_at: '',
+    amount_total: '',
+    pure_amount_total: ''
+});
 let chartContainer;
 let myChart;
 let currentOption;
@@ -76,6 +82,7 @@ async function initAmountStat() {
     const result = await HttpService.get('/api/getAmountStat', toast, { market_id: props.market_id, selection_id: props.selection_id });
     amountItem.value = result.amount_stat;
     selectionName.value = result.selection_name;
+    baseInfo.value = result.base_info;
 }
 async function initData() {
     loading.value = true;
@@ -354,6 +361,20 @@ function calculateDiff(a1, a2) {
     <div v-show="!loading">
         <div v-if="showNoDataMessage">暂时没有本场原图数据</div>
         <div tabindex="1" class="raw_graph_chat" ref="chats"></div>
+    </div>
+    <div class="grid">
+        <div class="col-4">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold">{{ baseInfo.event_info }}</div>
+        </div>
+        <div class="col-4">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold">{{ baseInfo.begin_at }}</div>
+        </div>
+        <div class="col-2">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold">{{ baseInfo.amount_total }}</div>
+        </div>
+        <div class="col-2">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold">{{ baseInfo.pure_amount_total }}</div>
+        </div>
     </div>
     <!--整体统计-->
     <div>
