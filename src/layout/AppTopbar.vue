@@ -65,6 +65,11 @@ function initMenu() {
     loadCurrentMenuItem(sssObj.getCurrentMenuItem());
 }
 
+function closeAllTab() {
+    tabs.value = [];
+    selectedTabId.value = false;
+}
+
 onMounted(() => {
     intervalId = setInterval(refreshConfig, refreshConfigIntervalTime);
     //currentMenuItem变化时，清空tabs;
@@ -280,6 +285,7 @@ const toggleUserinfo = (event) => {
             </TabMenu>
         </div>
         <div class="topbar_user">
+            <Button class="mr-2" label="全部关闭" @click="closeAllTab" />
             <Button class="topbar_userinfo_button" icon="pi pi-angle-down" :label="userInfoButtonLabel" iconPos="right" @click="toggleUserinfo" />
             <Menu ref="userinfoMenu" id="userinfo_menu" :model="userInfoItems" :popup="true" />
         </div>
