@@ -5,11 +5,7 @@
                 <div class="flex flex-row justify-content-between">
                     <div class="flex-column align-items-center">
                         <img style="width: 200px; height: auto;" src="/demo/bf/qq.png"/>
-                        <p class="text-center">学习交流请加qq群</p>
-                    </div>
-                    <div class="flex-column align-items-center">
-                        <img style="width: 200px; height: auto;" src="/demo/bf/wechat.png"/>
-                        <p class="text-center">付费问题请联系客服微信</p>
+                        <p class="text-center">有问题请联系客服QQ</p>
                     </div>
                 </div>
             </div>
