@@ -43,7 +43,7 @@ const toggleUserinfo = (event) => {
 
 <template>
     <div class="layout-topbar">
-        <router-link to="/" class="layout-topbar-logo">
+        <router-link :to="{ name: 'maindash' }"  class="layout-topbar-logo">
             <img :src="logoUrl" alt="logo" />
             <span>bf-data</span>
         </router-link>
