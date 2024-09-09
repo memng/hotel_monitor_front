@@ -89,7 +89,7 @@ async function doReSelect() {
                     <h3 class="text-900 text-center my-5">专业会员</h3>
                     <img src="/demo/images/landing/startup.svg" class="w-10 h-10 mx-auto" alt="startup" />
                     <div class="my-5 text-center">
-                        <span class="text-5xl font-bold mr-2 text-900">￥288</span>
+                        <span class="text-5xl font-bold mr-2 text-900">￥88</span>
                         <span class="text-600">/月</span>
                         <Button label="购买" :disabled="goods1Disable" @click="handlePurchase(1)" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-green-500 text-white"></Button>
                     </div>
@@ -116,7 +116,7 @@ async function doReSelect() {
                     <h3 class="text-900 text-center my-5">高级会员</h3>
                     <img src="/demo/images/landing/enterprise.svg" class="w-10 h-10 mx-auto" alt="enterprise" />
                     <div class="my-5 text-center">
-                        <span class="text-5xl font-bold mr-2 text-900">￥388</span>
+                        <span class="text-5xl font-bold mr-2 text-900">￥188</span>
                         <span class="text-600">/月</span>
                         <Button label="购买" :disabled="goods2Disable" @click="handlePurchase(2)" class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-green-500 text-white"></Button>
                     </div>
