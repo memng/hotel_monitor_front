@@ -14,7 +14,7 @@ const toast = useToast();
 
 const goodsId = ref(1);
 const goodsName = ref('专业版');
-const goodsPrice = ref(288);
+const goodsPrice = ref(88);
 const goodsNumber = ref(1);
 const totalPrice = computed(() => {
     return goodsPrice.value * goodsNumber.value;
@@ -42,11 +42,11 @@ function handlePurchase(gid) {
     if (gid === 1) {
         goodsId.value = 1;
         goodsName.value = '专业版';
-        goodsPrice.value = 288;
+        goodsPrice.value = 88;
     } else if (gid === 2) {
         goodsId.value = 2;
         goodsName.value = '高级版';
-        goodsPrice.value = 388;
+        goodsPrice.value = 188;
     } else {
         console.error('商品id选择错误:' + gid);
     }
