@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
-import AppSimpleLayout from '@/simple_layout/AppSimpleLayout.vue';
 import SessionStorageService from '../service/SessionStorageService';
 import OpenHttpService from '@/service/OpenHttpService';
 import IndexLayout from '@/views/index/IndexLayout.vue';
@@ -31,34 +30,15 @@ const router = createRouter({
                     meta: { requiresAuth: true }
                 },
                 {
+                    path: 'changePassword',
+                    name: 'changePassword',
+                    component: () => import('@/views/user/ChangePassword.vue'),
+                    meta: { requiresAuth: true }
+                },
+                {
                     path: 'logout',
                     name: 'logout',
                     component: () => import('@/views/user/Logout.vue'),
-                    meta: { requiresAuth: true }
-                }
-            ]
-        },
-        {
-            path: '/user/',
-            component: AppSimpleLayout,
-            meta: { requiresAuth: true },
-            children: [
-                {
-                    path: 'usercentre',
-                    name: 'usercentre',
-                    component: () => import('@/views/user/UserCentre.vue'),
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: 'goodsintro',
-                    name: 'goodsintro',
-                    component: () => import('@/views/user/GoodsIntro.vue'),
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: 'orderstatus',
-                    name: 'orderstatus',
-                    component: () => import('@/views/user/OrderStatus.vue'),
                     meta: { requiresAuth: true }
                 }
             ]
@@ -68,67 +48,11 @@ const router = createRouter({
             component: IndexLayout,
             children: [
                 {
-                    path: 'home',
-                    name: 'index_home',
-                    component: () => import('@/views/index/IndexMain.vue'),
-                },
-                {
-                    path: 'price',
-                    name: 'index_price',
-                    component: () => import('@/views/index/IndexPrice.vue'),
-                },
-                {
-                    path: 'faq',
-                    name: 'index_faq',
-                    component: () => import('@/views/index/IndexFaq.vue'),
-                },
-                {
-                    path: 'contact',
-                    name: 'index_contact',
-                    component: () => import('@/views/index/IndexContact.vue'),
-                },
-                {
-                    path: 'category/:id(\\d+)', // 匹配形如 123.html 的路径
-                    component: () => import('@/views/index/IndexCategory.vue'),
-                    name: 'index_category'
-                },
-                {
-                    path: 'page/:id(\\d+)',
-                    component: () => import('@/views/index/IndexPage.vue'),
-                    name: 'index_article'
-                },
-                {
-                    path: 'reg',
-                    name: 'index_reg',
-                    component: () => import('@/views/pages/auth/Reg.vue'),
-                },
-                {
-                    path: 'reg_agreement',
-                    name: 'reg_agreement',
-                    component: () => import('@/views/index/RegAgreement.vue'),
-                },
-                {
-                    path: 'get_password',
-                    name: 'index_get_password',
-                    component: () => import('@/views/pages/auth/GetPassword.vue'),
-                },
-                {
                     path: 'login',
                     name: 'login',
                     component: () => import('@/views/pages/auth/Login.vue')
                 },
             ]
-        },
-
-        {
-            path: '/auth/login',
-            name: 'authLlogin',
-            component: () => import('@/views/pages/auth/Login.vue')
-        },
-        {
-            path: '/auth/access',
-            name: 'accessDenied',
-            component: () => import('@/views/pages/auth/Access.vue')
         },
     ]
 });

@@ -1,10 +1,8 @@
 export default class SessionStorageService {
     constructor() {
         this.userInfoKey = 'user_info';
-        this.configKey = 'config';
         this.tokenKey = 'token';
         this.refreshTokenKey = 'rf_token';
-        this.currentMenuItem = 'current_menu_item';
         this.sessionIdKey = 'session_id';
     }
 
@@ -26,46 +24,6 @@ export default class SessionStorageService {
     // 清除 user_info
     clearUserInfo() {
         localStorage.removeItem(this.userInfoKey);
-    }
-
-    // 保存 config
-    setConfig(config) {
-        if (typeof config === 'object') {
-            localStorage.setItem(this.configKey, JSON.stringify(config));
-        } else {
-            console.error('Config should be an object');
-        }
-    }
-
-    // 获取 config
-    getConfig() {
-        const config = localStorage.getItem(this.configKey);
-        return config ? JSON.parse(config) : null;
-    }
-
-    // 清除 config
-    clearConfig() {
-        localStorage.removeItem(this.configKey);
-    }
-
-    // 保存 current_menu_item
-    setCurrentMenuItem(currentMenuItem) {
-        if (typeof currentMenuItem === 'object') {
-            localStorage.setItem(this.currentMenuItem, JSON.stringify(currentMenuItem));
-        } else {
-            console.error('CurrentMenuItem should be an object');
-        }
-    }
-
-    // 获取 current_menu_item
-    getCurrentMenuItem() {
-        const currentMenu = localStorage.getItem(this.currentMenuItem);
-        return currentMenu ? JSON.parse(currentMenu) : null;
-    }
-
-    // 清除 current_menu_item
-    clearCurrentMenuItem() {
-        localStorage.removeItem(this.currentMenuItem);
     }
 
     // 保存 token

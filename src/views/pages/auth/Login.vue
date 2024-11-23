@@ -37,7 +37,6 @@ async function doLoginIn() {
         const data = await OpenHttpService.post('/open/doLogin', { ...loginForm.value });
         if (data.ret === 200) {
             sessionStorageObj.setUserInfo(data.data.user_info);
-            sessionStorageObj.setConfig(data.data.config);
             sessionStorageObj.setRfToken(data.data.refresh_token);
             sessionStorageObj.setToken(data.data.access_token);
             router.push({ name: 'maindash' });
@@ -85,8 +84,8 @@ onMounted(() => {
                     </div>
 
                     <div>
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">手机号</label>
-                        <InputText id="email1" type="text" placeholder="请输入手机号" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="loginForm.user_phone" />
+                        <label for="email1" class="block text-900 text-xl font-medium mb-2">用户名</label>
+                        <InputText id="email1" type="text" placeholder="请输入用户名" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="loginForm.user_phone" />
 
                         <label for="password1" class="block text-900 font-medium text-xl mb-2">密码</label>
                         <Password id="password1" v-model="loginForm.user_pass" placeholder="密码" :feedback="false" :toggleMask="true" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
@@ -96,13 +95,6 @@ onMounted(() => {
                                 <InputText v-model="loginForm.verify_code" id="captcha" placeholder="输入右侧数字" />
                                 <img :src="captchaUrl" @click="fetchCaptcha" alt="点击刷新验证码" class="captcha-image">
                             </div>
-                        </div>
-
-                        <div class="flex align-items-center justify-content-between mb-5 gap-5">
-                            <div class="flex align-items-center">
-                                <a class="font-medium no-underline ml-2 text-right cursor-pointer" href="/index/reg" style="color: var(--primary-color)">新用户注册</a>
-                            </div>
-                            <a class="font-medium no-underline ml-2 text-right cursor-pointer" href="/index/get_password" style="color: var(--primary-color)">忘记密码？</a>
                         </div>
                         <Button @click="doLoginIn()" label="登录" class="w-full p-3 text-xl"></Button>
                     </div>

@@ -9,19 +9,17 @@ const { message: generalMessage } = useMessage();
 class HttpService {
     constructor() {
         // 初始化 URL 前缀属性
-        this.urlPrefix = 'https://api.bf-data.cn';
+        this.urlPrefix = 'http://localhost';
     }
     async request(url, toast, options) {
         try {
             const storage = new SessionStorageService();
             const token = storage.getRfToken() + ',' + storage.getToken();
-            const level = storage.getConfig() !== null ? storage.getCurrentMenuItem().id : null;
             // 添加验证信息到请求头
             const headers = {
                 ...options.headers,
                 // 添加验证信息
                 Authorization: token,
-                Level: level
             };
             options.headers = headers;
 
