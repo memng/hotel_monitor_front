@@ -9,7 +9,7 @@ const { message: generalMessage } = useMessage();
 class HttpService {
     constructor() {
         // 初始化 URL 前缀属性
-        this.urlPrefix = 'http://localhost';
+        this.urlPrefix = 'http://8.141.13.176:88';
     }
     async request(url, toast, options) {
         try {
