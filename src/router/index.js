@@ -24,6 +24,12 @@ const router = createRouter({
                     meta: { requiresAuth: true }
                 },
                 {
+                    path: 'add',
+                    name: 'add',
+                    component: () => import('@/views/Add.vue'),
+                    meta: { requiresAuth: true }
+                },
+                {
                     path: 'nopermission',
                     name: 'nopermission',
                     component: () => import('@/views/pages/auth/Access.vue'),

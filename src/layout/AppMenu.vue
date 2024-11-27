@@ -9,7 +9,10 @@ const sssObj = new SessionStorageService();
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: '监控列表', icon: 'pi pi-fw pi-home', to: '/' }]
+        items: [
+            { label: '监控列表', icon: 'pi pi-fw pi-home', to: '/maindash' },
+            { label: '新增监控', icon: 'pi pi-fw pi-home', to: '/add' }
+        ]
     },
     {
         label: 'Profile',

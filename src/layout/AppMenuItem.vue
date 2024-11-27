@@ -33,7 +33,6 @@ onBeforeMount(() => {
     itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
 
     const activeItem = layoutConfig.activeMenuItem.value;
-    console.log(activeItem);
 
     isActiveMenu.value = activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
 });
