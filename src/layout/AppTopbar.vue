@@ -74,7 +74,7 @@ const isOutsideClicked = (event) => {
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <Button class="topbar_userinfo_button" icon="pi" :label="userInfoButtonLabel" iconPos="right" @click="toggleUserinfo" />
+            <Button class="topbar_userinfo_button" icon="pi" :label="userInfoButtonLabel" iconPos="right" />
         </div>
     </div>
 </template>
