@@ -4,38 +4,44 @@ import HttpService from '@/service/HttpService';
 import { useToast } from 'primevue/usetoast';
 import moment from 'moment';
 import { useRouter } from 'vue-router';
+import Dropdown from 'primevue/dropdown';
 const toast = useToast();
 const router = useRouter();
 
 const countryList = ref([]);
 const cityList = ref([]);
 const hotelList = ref([]);
+const roomTypeList = ref([]);
 
 const staffList = ref([]);
-const roomTypeList = ref([]);
 const typeList = ref([]);
 const noticeIntervalList = ref([]);
+const continuityStatusList = ref([]);
 
 const selectCountry = ref();
 const selectCity = ref();
 const selectHotel = ref();
 
 const selectStaffId = ref();
-const selectRoomTypetId = ref();
+const selectRoomTypetId = ref([]);
 const selectTypeId = ref();
 const selectCheckDate = ref();
+const selectCheckOutDate = ref();
+const selectCheckInDate = ref();
 const selectNoticeInterval = ref();
+const selectContinuityStatus = ref('1');
 
 const countryLoading = ref(false);
 const cityLoading = ref(false);
 const hotelLoading = ref(false);
+const roomloading = ref(false);
 
 onMounted(async () => {
     try {
         const loadData = await initData();
         countryList.value = loadData.countryListResult;
         staffList.value = loadData.commonConfig.staff;
-        roomTypeList.value = loadData.commonConfig.room_type;
+        continuityStatusList.value = loadData.commonConfig.continuity_status;
         typeList.value = loadData.commonConfig.type;
         noticeIntervalList.value = loadData.commonConfig.notice_interval;
     } catch (error) {
@@ -62,8 +68,11 @@ watch(selectCountry, async (newValue) => {
     try {
         cityList.value = transformEmptyObjectToArray(await HttpService.get('/api/getCityByCountryCode', toast, { CountryCode: newValue }));
         hotelList.value = [];
+        roomTypeList.value = [];
+
         selectCity.value = undefined;
         selectHotel.value = undefined;
+        selectRoomTypetId.value = undefined;
     } finally {
         cityLoading.value = false;
     }
@@ -74,9 +83,26 @@ watch(selectCity, async (newValue) => {
     try {
         hotelList.value = transformEmptyObjectToArray(await HttpService.get('/api/getHotelByCode', toast, { CountryCode: selectCountry.value, CityCode: newValue }));
         selectHotel.value = undefined;
+
+        roomTypeList.value = [];
+        selectRoomTypetId.value = undefined;
     } finally {
         hotelLoading.value = false;
     }
+});
+
+watch(selectHotel, async (newValue) => {
+    roomloading.value = true;
+    try {
+        roomTypeList.value = transformEmptyObjectToArray(await HttpService.get('/api/getRoomTypeByHotelID', toast, { HotelID: newValue }));
+        selectRoomTypetId.value = undefined;
+    } finally {
+        roomloading.value = false;
+    }
+});
+
+watch(selectContinuityStatus, (newValue) => {
+    console.log(newValue);
 });
 
 async function submitForm() {
@@ -89,7 +115,25 @@ async function submitForm() {
         });
         return;
     }
-    if (selectCheckDate.value === undefined) {
+    if (selectRoomTypetId.value === undefined) {
+        toast.add({
+            severity: 'error',
+            summary: '错误',
+            detail: '房型数据不能为空',
+            life: 5000
+        });
+        return;
+    }
+    if (selectContinuityStatus.value === undefined) {
+        toast.add({
+            severity: 'error',
+            summary: '错误',
+            detail: '连续类型不能为空',
+            life: 5000
+        });
+        return;
+    }
+    if (selectContinuityStatus.value === 1 && selectCheckDate.value === undefined) {
         toast.add({
             severity: 'error',
             summary: '错误',
@@ -98,11 +142,11 @@ async function submitForm() {
         });
         return;
     }
-    if (selectRoomTypetId.value === undefined) {
+    if (selectContinuityStatus.value === 2 && (selectCheckOutDate.value === undefined || selectCheckInDate.value === undefined)) {
         toast.add({
             severity: 'error',
             summary: '错误',
-            detail: '人数不能为空',
+            detail: '连续类型checkout时间不能为空',
             life: 5000
         });
         return;
@@ -134,27 +178,22 @@ async function submitForm() {
         });
         return;
     }
-    const arrays = [selectHotel.value, selectCheckDate.value, selectRoomTypetId.value];
-    const count = arrays.filter((arr) => arr.length > 1).length;
-    if (count >= 2) {
-        toast.add({
-            severity: 'error',
-            summary: '错误',
-            detail: '酒店、日期、人数只允许一组数据多选',
-            life: 5000
-        });
-        return;
-    }
-    const checkDateFormat = selectCheckDate.value.map((item) => moment(item).format('YYYY-MM-DD'))
     try {
         const params = {
-            hotel_id: selectHotel.value.join(','),
+            hotel_id: selectHotel.value,
             room_type_id: selectRoomTypetId.value.join(','),
-            check_date: checkDateFormat.join(','),
             monitor_user_id: selectStaffId.value,
             monitor_type: selectTypeId.value,
-            notice_interval: selectNoticeInterval.value
+            notice_interval: selectNoticeInterval.value,
+            continuity_status: selectContinuityStatus.value,
         };
+        if (selectContinuityStatus.value === '1') {
+            const checkDateFormat = selectCheckDate.value.map((item) => moment(item).format('YYYY-MM-DD'));
+            params['check_date'] = checkDateFormat.join(',');
+        } else {
+            params['check_date'] = moment(selectCheckInDate.value).format('YYYY-MM-DD');
+            params['check_out_date'] = moment(selectCheckOutDate.value).format('YYYY-MM-DD');
+        }
         const postResult = await HttpService.post('/api/monitorList/create', toast, params);
         if (postResult === 1) {
             toast.add({
@@ -174,13 +213,16 @@ function resetForm() {
     selectCountry.value = undefined;
     selectCity.value = undefined;
 
-    selectHotel.value = [];
-    selectCheckDate.value =[];
-    selectRoomTypetId.value=[];
+    selectCheckDate.value = [];
+    selectRoomTypetId.value = [];
 
+    selectHotel.value = undefined;
     selectTypeId.value = undefined;
     selectStaffId.value = undefined;
     selectNoticeInterval.value = undefined;
+    selectContinuityStatus.value = undefined;
+    selectCheckInDate.value = undefined;
+    selectCheckOutDate.value = undefined;
 }
 
 function transformEmptyObjectToArray(data) {
@@ -200,19 +242,31 @@ function transformEmptyObjectToArray(data) {
                     <div class="col-12 md:col-10">
                         <Dropdown v-model="selectCountry" filter :loading="countryLoading" :options="countryList" optionLabel="CountryName_CN" optionValue="ISOCountryCode" placeholder="选择国家" class="w-full md:w-14rem" />
                         <Dropdown v-model="selectCity" filter :loading="cityLoading" :options="cityList" optionLabel="CityName_CN" optionValue="CityCode" placeholder="选择城市" class="w-full md:w-14rem mt-2" />
-                        <MultiSelect v-model="selectHotel" filter :loading="hotelLoading" :options="hotelList" optionLabel="Name_CN" optionValue="HotelID" placeholder="选择酒店" :maxSelectedLabels="1" class="w-full md:w-20rem mt-2" />
+                        <Dropdown v-model="selectHotel" filter :loading="hotelLoading" :options="hotelList" optionLabel="Name_CN" optionValue="HotelID" placeholder="选择酒店" class="w-full md:w-20rem mt-2" />
+                        <MultiSelect v-model="selectRoomTypetId" filter :loading="roomloading" :options="roomTypeList" optionLabel="Name_CN" optionValue="id" placeholder="选择房型" :maxSelectedLabels="1" class="w-full md:w-20rem mt-2" />
                     </div>
                 </div>
                 <div class="field grid">
-                    <label for="email3" class="col-12 mb-2 md:col-2 md:mb-0">日期</label>
+                    <label for="name3" class="col-12 mb-2 md:col-2 md:mb-0">是否连续入住</label>
+                    <div class="col-12 md:col-10">
+                        <RadioButton class="ml-2" v-model="selectContinuityStatus" value="1" inputId="ingredient1" name="pizza" />
+                        <label for="ingredient1" class="ml-2">不连续入住</label>
+
+                        <RadioButton class="ml-2" v-model="selectContinuityStatus" value="2" inputId="ingredient1" name="pizza" />
+                        <label for="ingredient1" class="ml-2">连续入住</label>
+                    </div>
+                </div>
+                <div v-if="selectContinuityStatus === '1'" class="field grid">
+                    <label for="email3" class="col-12 mb-2 md:col-2 md:mb-0">选择日期</label>
                     <div class="col-12 md:col-10">
                         <Calendar v-model="selectCheckDate" selectionMode="multiple" dateFormat="yy-mm-dd" placeholder="选择日期" :manualInput="false" />
                     </div>
                 </div>
-                <div class="field grid">
-                    <label for="email3" class="col-12 mb-2 md:col-2 md:mb-0">人数</label>
+                <div v-if="selectContinuityStatus === '2'" class="field grid">
+                    <label for="email3" class="col-12 mb-2 md:col-2 md:mb-0">选择开始和结束时间</label>
                     <div class="col-12 md:col-10">
-                        <MultiSelect v-model="selectRoomTypetId" :options="roomTypeList" optionLabel="adult_count" optionValue="id" placeholder="选择人数" :maxSelectedLabels="3" class="w-full md:w-14rem" />
+                        <Calendar v-model="selectCheckInDate" dateFormat="yy-mm-dd" placeholder="选择开始日期" :manualInput="false" />
+                        <Calendar class="ml-2" v-model="selectCheckOutDate" dateFormat="yy-mm-dd" placeholder="选择结束日期" :manualInput="false" />
                     </div>
                 </div>
                 <div class="field grid">

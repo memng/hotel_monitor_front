@@ -3,7 +3,8 @@ import SessionStorageService from "./SessionStorageService";
 class OpenHttpService {
     constructor() {
         // 初始化 URL 前缀属性
-        this.urlPrefix = 'http://8.141.13.176:88';
+        //this.urlPrefix = 'http://8.141.13.176:88';
+        this.urlPrefix = 'http://127.0.0.1';
     }
     async request(url, options) {
         const fullUrl = this.urlPrefix + url;
