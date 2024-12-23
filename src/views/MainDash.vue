@@ -131,7 +131,7 @@ const editItem = async (id) => {
         }
 
         selectHotel.value = editItem.hotel.Name_CN;
-        selectRoomTypetId.value = editItem.room_type_id.split(',');
+        selectRoomTypetId.value = editItem.room_type_id.includes(',') ? editItem.room_type_id.split(',').map((id) => parseInt(id, 10)) : [parseInt(editItem.room_type_id, 10)];
         selectContinuityStatus.value = String(editItem.continuity_status);
         if (selectContinuityStatus.value === '1') {
             selectCheckDate.value = editItem.check_date.split(',').map((item) => moment(item, 'YYYY-MM-DD').toDate());
@@ -350,7 +350,18 @@ function cancleForm() {
             <div class="field grid">
                 <label for="name3" class="col-12 mb-2 md:col-2 md:mb-0">房型</label>
                 <div class="col-12 md:col-10">
-                    <MultiSelect v-model="selectRoomTypetId" filter :loading="roomloading" :options="roomTypeList" optionLabel="Name_CN" optionValue="id" placeholder="选择房型" :maxSelectedLabels="1" class="w-full md:w-20rem mt-2" />
+                    <MultiSelect
+                        v-model="selectRoomTypetId"
+                        filter
+                        :autoOptionFocus="true"
+                        :loading="roomloading"
+                        :options="roomTypeList"
+                        optionLabel="Name_CN"
+                        optionValue="id"
+                        placeholder="选择房型"
+                        :maxSelectedLabels="3"
+                        class="w-full md:w-20rem mt-2"
+                    />
                 </div>
             </div>
             <div class="field grid">
