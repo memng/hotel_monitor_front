@@ -27,6 +27,7 @@ const noticeIntervalList = ref([]);
 const roomTypeList = ref([]);
 
 const selectHotel = ref();
+const selectHotelId = ref();
 const selectStaffId = ref();
 const selectTypeId = ref();
 const selectCheckDate = ref();
@@ -130,6 +131,7 @@ const editItem = async (id) => {
             roomloading.value = false;
         }
 
+        selectHotelId.value = editItem.hotel_id;
         selectHotel.value = editItem.hotel.Name_CN;
         selectRoomTypetId.value = editItem.room_type_id.includes(',') ? editItem.room_type_id.split(',').map((id) => parseInt(id, 10)) : [parseInt(editItem.room_type_id, 10)];
         selectContinuityStatus.value = String(editItem.continuity_status);
@@ -146,6 +148,15 @@ const editItem = async (id) => {
 };
 
 async function submitForm() {
+    if (selectHotelId.value === undefined) {
+        toast.add({
+            severity: 'error',
+            summary: '错误',
+            detail: '酒店数据不能为空',
+            life: 5000
+        });
+        return;
+    }
     if (selectRoomTypetId.value === undefined) {
         toast.add({
             severity: 'error',
@@ -211,7 +222,8 @@ async function submitForm() {
     }
     try {
         const params = {
-            hotel_id: selectHotel.value,
+            id: editId.value,
+            hotel_id: selectHotelId.value,
             room_type_id: selectRoomTypetId.value.join(','),
             monitor_user_id: selectStaffId.value,
             monitor_type: selectTypeId.value,
