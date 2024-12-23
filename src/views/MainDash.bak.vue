@@ -12,7 +12,6 @@ const uniqueCheckDate = ref([]);
 const uniqueRoom = ref([]);
 const uniqueUser = ref([]);
 const uniqueContinuity = ref([]);
-const uniqueType = ref([]);
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -47,6 +46,7 @@ const filters = ref({
 });
 
 onMounted(async () => {
+    console.log('test');
     try {
         loadData.value = await initData();
 
@@ -280,7 +280,7 @@ function cancleForm() {
                     </div>
                 </template>
             </Column>
-            <Column header="入住类型" field="continuity.value" filterField="continuity.value" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }" style="min-width: 12rem">
+            <Column header="入住类型" :showFilterMenu="false" :filterMenuStyle="{ width: '14rem' }" style="min-width: 12rem">
                 <template #body="{ data }">
                     <span> {{ data.continuity.value }} </span>
                 </template>
