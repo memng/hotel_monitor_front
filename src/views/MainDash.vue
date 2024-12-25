@@ -60,6 +60,7 @@ onMounted(async () => {
         uniqueCheckDate.value = [...new Set(loadData.value.map((item) => item.check_date))].map((date) => ({ value: date }));
         uniqueRoom.value = [...new Set(loadData.value.map((item) => item.room_type.adult_count))].map((a_count) => ({ value: a_count }));
         uniqueUser.value = [...new Set(loadData.value.map((item) => item.staff.user_name))].map((a_count) => ({ value: a_count }));
+        uniqueType.value = [...new Set(loadData.value.map((item) => item.type.value))].map((a_count) => ({ value: a_count }));
         uniqueContinuity.value = [...new Set(loadData.value.map((item) => item.continuity_status.value))].map((a_count) => ({ value: a_count }));
     } catch (error) {
         console.error('init tabel data error:' + error.message);
