@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 如果请求的文件或目录存在，则直接访问
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 否则，所有请求重定向到 index.html
+  RewriteRule ^ /index.html [L]
+</IfModule>
