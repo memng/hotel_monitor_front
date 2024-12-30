@@ -41,7 +41,7 @@ const roomloading = ref(false);
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    'hotel.Name_CN': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    'hotel.Name_CN': { value: null, matchMode: FilterMatchMode.CONTAINS },
     'staff.user_name': { value: null, matchMode: FilterMatchMode.EQUALS },
     'type.value': { value: null, matchMode: FilterMatchMode.EQUALS },
     'continuity.value': { value: null, matchMode: FilterMatchMode.EQUALS }
